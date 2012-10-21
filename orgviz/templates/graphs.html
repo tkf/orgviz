@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block favicon -%}
+<link rel="shortcut icon"
+      href="{{ url_for('static', filename='favicons/chart.ico') }}">
+{%- endblock %}
+{% block head %}
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='jquery/jquery-1.5.2.min.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='jquery/jquery.hotkeys.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='graphs.js') }}"
+   ></script>
+<script type='text/javascript'>
+  $(document).ready(function() {
+      $('#help').hide();
+      $(document)
+      // show key bindings
+          .bind('keydown', 'q', function() {
+              $('#help').toggle();
+          })
+      // reload images
+          .bind('keydown', 'o', getReloadImages($('.graph')));
+  });
+</script>
+{% endblock %}
+{% block body %}
+<div id="help">
+  <dl>
+    <dt> q
+    <dd> Show/hide this help
+    <dt> o
+    <dd> Reload
+  </dl>
+</div>
+<h1>{{ title }}</h1>
+<img class="graph"
+     alt="Clocked time per day"
+     src="{{ url_for('graphs_image', name='clocked_par_day') }}" />
+<img class="graph"
+     alt="Tasks done par day"
+     src="{{ url_for('graphs_image', name='done_par_day') }}" />
+{% endblock %}

@@ -1,0 +1,34 @@
+<table class="tasks">
+  <tr>
+    <th class="tasks">Closed</th>
+    <th class="tasks">Task</th>
+  </tr>
+  {% for row in table %}
+  <tr>
+    <td class="tasks{% if row.oddday %} oddday{% endif %}">
+      {{ row.closed }}
+    </td>
+    <td class="tasks">
+      <h4>{{ row.heading }}</h4>
+      <table style="width: 100%" class="taskdata">
+        <tr>
+          <td width="35%">
+            clocked: <span class="clocked">
+              {%- if row.clocksum %}{{ row.clocksum }}{% else %}-{%- endif %}
+              ({%- if row.effort -%}{{ row.effort }}{%- else -%}-
+              {%- endif -%})</span>
+          </td>
+          <td width="40%">
+            {% if row.scheduled -%}
+            scheduled: <span class="scheduled">{{ row.scheduled }}</span>
+            {%- endif %}
+          </td>
+          <td width="25%" class="orgname">
+            <span>@{{ row.orgname }}</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

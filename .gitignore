@@ -2,3 +2,9 @@
 MANIFEST
 doc/build
 env
+orgviz/static/*.js
+orgviz/static/lib/
+orgviz/static/colorbox/
+orgviz/static/fullcalendar/
+orgviz/static/jquery/
+orgviz/static/favicons/

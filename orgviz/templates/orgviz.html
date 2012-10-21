@@ -1,0 +1,204 @@
+<!doctype html>
+<title></title>
+<link rel="shortcut icon"
+      href="{{ url_for('static', filename='favicons/default.ico') }}">
+<style type="text/css">
+    body {
+      font-family: Lucida Sans,Arial,sans-serif;
+      margin: 0;
+      padding 0;
+      font-size: 14px;
+    }
+    #help {
+      padding: 14px;
+    }
+    #help dt {
+      padding: 3px;
+      background: #E5E5E5;
+      font-weight: bold;
+    }
+    #help dd {
+      padding: 3px;
+    }
+
+    #calendar-control-advanced {
+      background: #E5E5E5;
+    }
+
+    table.tasks {
+      border-top:1px solid #e5eff8;
+      border-right:1px solid #e5eff8;
+      margin:1em auto;
+      border-collapse:collapse;
+    }
+    td.tasks,
+    th.tasks {
+      /*color:#678197;*/
+      border-bottom:1px solid #e5eff8;
+      border-left:1px solid #e5eff8;
+      padding:.3em 1em;
+    }
+    td.oddday, th.tasks {
+      background:#E3E4FA
+    }
+    table.tasks h4 {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    .taskdata {
+      color: gray;
+    }
+    span.clocked {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    span.scheduled {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    td.orgname {
+      text-align: right;
+    }
+</style>
+<link
+   rel='stylesheet' type='text/css'
+   href="{{ url_for('static', filename='fullcalendar/fullcalendar.css') }}"
+   />
+<link
+   rel='stylesheet' type='text/css'
+   href="{{ url_for('static', filename='colorbox/colorbox.css') }}"
+   />
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='jquery/jquery-1.5.2.min.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='fullcalendar/fullcalendar.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='fullcalendar/gcal.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='colorbox/jquery.colorbox-min.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='jquery/jquery.hotkeys.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='orgviz.js') }}"
+   ></script>
+<body>
+<div style='display:none'>
+  <div id="help">
+    <dl>
+      <dt> H
+      <dd> Show this help
+      <dt> P
+      <dd> Toggle advanced control panel
+      <dt> Esc
+      <dd> Close this help
+      <dt> ←, →
+      <dd> Move the calendar one step back/forward
+      <dt> 1-9
+      <dd> Change perspective
+      <dt> z, x, c, v, b, n
+      <dd> Toggle on/off: deadline, scheduled, STP, closed, clock, misc
+      <dt> q, w, e, r, t
+      <dd> Change view: month, week, day, week (agenda), day (agenda)
+      <dt> Shift + 1-9
+      <dd> Toggle filters
+      <!-- Shift + alphabet (key comes from word; R for reload) -->
+      <dt> A
+      <dd> Start/stop auto-reload
+      <dt> T
+      <dd> Go to today
+      <dt> R
+      <dd> Reload calendar
+      <dt> g
+      <dd> Reload graphs
+      <dt> C, G, D
+      <dd> Go to page: Calendar, Graph, DONEs
+      <dt> L
+      <dd> Open <a href="{{ url_for('page_timeline') }}" id="timeline_link"
+                   target="_blank">timeline page</a> in new tab (window)
+    </dl>
+  </div>
+</div>
+<div id='container-calendar'>
+  <div id='calendar-control-basic'>
+    <form>
+      <a class="inline" id="help_link" href="#help">help (H)</a>
+      <input type="checkbox" name="auto-reload" value="auto-reload"
+             id="auto-reload"/> auto-reload (A)
+      {% for (pid, name) in cal_perspectives -%}
+      <input type="radio" class="cal-perspective"
+             name="cal-perspective" value="cal-perspective-{{ pid }}"
+             id="cal-perspective-{{ pid }}"
+             {%- if loop.first %} checked="yes"{% endif %}/>
+        {{- name }} ({{ pid + 1 }})
+      {% endfor -%}
+    </form>
+  </div>
+  <div id='calendar-control-advanced'>
+    <form>
+      Event:
+      <input type="checkbox"
+             name="eventclass-deadline" value="eventclass-deadline"
+             id="eventclass-deadline" checked="yes" /> Deadline (z)
+      <input type="checkbox"
+             name="eventclass-scheduled" value="eventclass-scheduled"
+             id="eventclass-scheduled" checked="yes" /> Scheduled (x)
+      <input type="checkbox"
+             name="eventclass-stp" value="eventclass-stp"
+             id="eventclass-stp" checked="yes" /> STP (c)
+      <input type="checkbox"
+             name="eventclass-closed" value="eventclass-closed"
+             id="eventclass-closed"/> Closed (v)
+      <input type="checkbox"
+             name="eventclass-clock" value="eventclass-clock"
+             id="eventclass-clock"/> Clock (b)
+      <input type="checkbox"
+             name="eventclass-misc" value="eventclass-misc"
+             id="eventclass-misc"/> misc (n)
+    </form>
+    <form>
+      Filter:
+      {% for (fid, name) in eventfilters -%}
+      <input type="checkbox" class="eventfilter"
+             name="eventfilter-{{ fid }}" value="eventfilter-{{ fid }}"
+             id="eventfilter-{{ fid }}"/> {{ name }} (S-{{ fid + 1 }})
+      {% endfor -%}
+    </form>
+  </div>
+  <div id='calendar'></div>
+</div>
+<div id='container-graphs'>
+  <h4>Overview</h4>
+  <img class="graph"
+       alt="Overview"
+       src="{{ url_for('graphs_image', name='overview') }}" />
+  <h4>Clocked time per day</h4>
+  <img class="graph"
+       alt="Clocked time per day"
+       src="{{ url_for('graphs_image', name='clocked_par_day') }}" />
+  <h4>Tasks done par day</h4>
+  <img class="graph"
+       alt="Tasks done par day"
+       src="{{ url_for('graphs_image', name='done_par_day') }}" />
+</div>
+<div id='container-dones'></div>
+<script type='text/javascript'>
+  var favicon = {
+    "calendar": "{{ url_for('static', filename='favicons/calendar.ico') }}",
+    "graphs": "{{ url_for('static', filename='favicons/chart.ico') }}",
+    "dones": "{{ url_for('static', filename='favicons/cube_molecule_preferences.ico') }}"
+  }
+  var cal_perspectives_data = {{ cal_perspectives_data|tojson|safe }};
+  setOrgGtdWeb("{{ url_for('events_data') }}", cal_perspectives_data, favicon);
+</script>
+</body>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>{{ title }}</title>
+
+  <link rel="stylesheet"
+        href="{{ css('aristo/jquery-ui-1.8.5.custom.css') }}"
+        type="text/css" media="screen" title="no title" charset="utf-8">
+
+  <link rel="stylesheet"
+        href="{{ tg('Timeglider.css') }}"
+        type="text/css" media="screen" title="no title" charset="utf-8">
+
+  <style type='text/css'>
+    body {
+      margin: 0;
+      padding 0;
+      font-family: Lucida Sans,Arial,sans-serif;
+    }
+
+    #ltmenu {
+      position: fixed;
+      padding: 5px;
+      background: #DDDDDD;
+      z-index: 1;
+      opacity: 0.8;
+    }
+
+    #placement {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="ltmenu">
+    <form>
+      <input type="checkbox" name="auto-reload" value="auto-reload"
+             id="auto-reload"> auto-reload (a)</input>
+    </form>
+  </div>
+  <div id='placement'></div>
+
+  <!-- 3rd party libs -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  {% for name in [
+  'jquery-ui-1.8.9.custom.min.js',
+  'jquery.tmpl.js', 'underscore-min.js', 'backbone-min.js', 'ba-debug.min.js',
+  'jquery.mousewheel.min.js', 'jquery.ui.ipad.js', 'raphael-min.js',
+  'jquery.global.js', 'ba-tinyPubSub.js',
+  ] -%}
+  <script src="{{ js(name) }}" type="text/javascript" charset="utf-8"></script>
+  {% endfor %}
+
+  <!-- TIMEGLIDER -->
+  {% for name in [
+  'TG_Date.js', 'TG_Org.js', 'TG_Timeline.js', 'TG_TimelineView.js',
+  'TG_Mediator.js', 'timeglider.timeline.widget.js',
+  ] -%}
+  <script src="{{ tg(name) }}" type="text/javascript" charset="utf-8"></script>
+  <script
+     type='text/javascript'
+     src="{{ url_for('static', filename='jquery/jquery.hotkeys.js') }}"
+     ></script>
+  {% endfor %}
+  <script src="{{ url_for('static', filename='timeline.js') }}"
+          type="text/javascript" charset="utf-8"></script>
+
+  <script type="text/javascript">
+    var TL;  // for debug
+    $(document).ready(function () {
+      TL = setupTimeline($("#placement"), "{{ url_for('timeline_data') }}");
+    });
+  </script>
+
+</body>
+</html>

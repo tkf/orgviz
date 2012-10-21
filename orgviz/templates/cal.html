@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block head %}
+<style type="text/css">
+    body {
+      font-size: 14px;
+    }
+    #help {
+      padding: 14px;
+    }
+</style>
+<link
+   rel='stylesheet' type='text/css'
+   href="{{ url_for('static', filename='fullcalendar/fullcalendar.css') }}"
+   />
+<link
+   rel='stylesheet' type='text/css'
+   href="{{ url_for('static', filename='colorbox/colorbox.css') }}"
+   />
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='jquery/jquery-1.5.2.min.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='fullcalendar/fullcalendar.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='colorbox/jquery.colorbox-min.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='jquery/jquery.hotkeys.js') }}"
+   ></script>
+<script
+   type='text/javascript'
+   src="{{ url_for('static', filename='cal.js') }}"
+   ></script>
+{% endblock %}
+{% block favicon -%}
+<link rel="shortcut icon"
+      href="{{ url_for('static', filename='favicons/calendar.ico') }}">
+{%- endblock %}
+{% block body %}
+<div style='display:none'>
+  <div id="help">
+    <dl>
+      <dt> q
+      <dd> Show this help
+      <dt> Esc
+      <dd> Close this help
+      <dt> ←, →
+      <dd> Move the calendar one step back/forward
+      <dt> 1, 2, 3, 4, 5
+      <dd> Toggle on/off: deadline, scheduled, STP, closed, clock
+      <dt> Shift + 1, 2, 3, 4, 5
+      <dd> Change view: month, week, day, week (agenda), day (agenda)
+      <dt> a
+      <dd> Start/stop auto-reload
+      <dt> c
+      <dd> Go to the current day
+      <dt> o
+      <dd> Reload
+    </dl>
+  </div>
+</div>
+<div>
+  <form>
+    <a class="inline" id="help_link" href="#help">help (q)</a>
+    <input type="checkbox" name="auto-reload" value="auto-reload"
+           id="auto-reload"/> auto-reload (a)
+    <input type="checkbox"
+           name="eventclass-deadline" value="eventclass-deadline"
+           id="eventclass-deadline" checked="yes" /> Deadline (1)
+    <input type="checkbox"
+           name="eventclass-scheduled" value="eventclass-scheduled"
+           id="eventclass-scheduled" checked="yes" /> Scheduled (2)
+    <input type="checkbox"
+           name="eventclass-stp" value="eventclass-stp"
+           id="eventclass-stp" checked="yes" /> STP (3)
+    <input type="checkbox"
+           name="eventclass-closed" value="eventclass-closed"
+           id="eventclass-closed"/> Closed (4)
+    <input type="checkbox"
+           name="eventclass-clock" value="eventclass-clock"
+           id="eventclass-clock"/> Clock (5)
+  </form>
+</div>
+<div id='calendar'></div>
+<script type='text/javascript'>
+  setFullCalendar("{{ url_for('events_data') }}");
+</script>
+{% endblock %}

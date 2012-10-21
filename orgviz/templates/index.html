@@ -1,0 +1,6 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>{{ title }}</h1>
+<img alt="Overview"
+     src="{{ url_for('graphs_image', name='overview') }}" />
+{% endblock %}
