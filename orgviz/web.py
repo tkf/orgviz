@@ -7,7 +7,7 @@ from werkzeug.contrib.cache import SimpleCache
 import itertools
 import os
 import hashlib
-import Orgnode
+import orgparse
 
 from orgviz.graphs import (gene_clocked_par_day, gene_done_par_day,
                               gene_overview)
@@ -20,7 +20,7 @@ cache = SimpleCache(default_timeout=60 * 60 * 24)
 
 
 def get_orgnodes(filename):
-    """Cached version of Orgnode.makelist"""
+    """Cached version of orgparse.makelist"""
     cachename_orgnodes = u'org:{0}'.format(filename)         # file path
     cachename_lastmtime = u'org_mtime:{0}'.format(filename)  # modified time
     orgnodes = cache.get(cachename_orgnodes)
@@ -30,9 +30,10 @@ def get_orgnodes(filename):
         None in (orgnodes, lastmtime) or
         mtime > lastmtime):
         app.logger.debug("re-load org file '{0}'".format(filename))
-        orgnodes = Orgnode.makelist(filename)
-        cache.set(cachename_orgnodes, orgnodes)
-        cache.set(cachename_lastmtime, mtime)
+        orgnodes = list(orgparse.load(filename).traverse(include_self=False))
+        if not app.config['NO_CACHE']:
+            cache.set(cachename_orgnodes, orgnodes)
+            cache.set(cachename_lastmtime, mtime)
     else:
         app.logger.debug("use cache for org file '{0}'".format(filename))
     return orgnodes
@@ -124,7 +125,7 @@ A map between graph name to graph generator
 A graph generator takes the following two parameters:
 
 orgnodes
-    a list of Orgnodes such as the list returned by Orgnode.makelist.
+    a list of Orgnodes such as the list returned by orgparse.makelist.
 done
     TODO tag for done. Usually, it is just 'DONE'.
 """
@@ -132,7 +133,7 @@ done
 
 def orgnodes_from_paths(path_list):
     """
-    Returns concatenated list of Orgnode from list of path.
+    Returns concatenated list of orgparse from list of path.
     """
     return reduce(lambda x, y: x + y, map(get_orgnodes, path_list))
 
@@ -171,7 +172,6 @@ def events_data():
     return listjsonify(events)
 
 
-
 def gene_get_static_file_under(parent):
     def timeglider_get_file(path):
         return url_for('static', filename=os.path.join(parent, path))
@@ -192,6 +192,7 @@ def page_orgviz():
         zip(itertools.count(), app.config['ORG_CAL_FILTERS'])
         ]
     eventfilters_name_to_id = dict((name, i) for (i, name) in eventfilters)
+
     def filter_name_to_id(dct):
         if 'filter' in dct:
             newdct = dct.copy()
