@@ -1,9 +1,11 @@
 ENV = env
+ORGVIZ_OPTS =
 
 .PHONY : run requirements env clean-env clean
 
+
 run: requirements
-	$(ENV)/bin/python -m orgviz.web
+	$(ENV)/bin/python -m orgviz.web $(ORGVIZ_OPTS)
 
 
 ### Virtual Environment
