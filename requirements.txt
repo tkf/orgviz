@@ -1,0 +1,4 @@
+-e git://github.com/tkf/orgparse.git#egg=orgparse
+flask
+numpy
+matplotlib

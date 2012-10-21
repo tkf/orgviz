@@ -1,0 +1,4 @@
+.tox
+MANIFEST
+doc/build
+env
