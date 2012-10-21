@@ -62,17 +62,17 @@ def key_row_from_node(node):
     clocksum = ''
     clocklist = node.Clock()
     if clocklist:
-        clocksum = sum([k for (i,j,k) in clocklist])
+        clocksum = sum([k for (i, j, k) in clocklist])
     closed = node.Closed()
     scheduled = node.Scheduled()
     effort = node.Property('Effort')
     row = dict(
-        heading = heading,
-        closed = closed and closed.strftime('%a %d %b %H:%M'),
-        scheduled = scheduled and scheduled.strftime('%a %d %b %H:%M'),
-        effort = effort and minute_to_str(effort),
-        clocksum = clocksum and minute_to_str(clocksum),
-        rootname = rootname,
+        heading=heading,
+        closed=closed and closed.strftime('%a %d %b %H:%M'),
+        scheduled=scheduled and scheduled.strftime('%a %d %b %H:%M'),
+        effort=effort and minute_to_str(effort),
+        clocksum=clocksum and minute_to_str(clocksum),
+        rootname=rootname,
         )
     return (closed, row)
 

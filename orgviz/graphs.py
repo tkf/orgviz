@@ -19,11 +19,13 @@ from orgviz.dones import find_rootname
 
 from matplotlib.dates import  DateFormatter, WeekdayLocator, \
      DayLocator, MONDAY  # , HourLocator
+
 mondays = WeekdayLocator(MONDAY)        # major ticks on the mondays
-alldays    = DayLocator()              # minor ticks on the days
+alldays = DayLocator()                  # minor ticks on the days
 weekFormatter = DateFormatter('%b %d')  # Eg, Jan 12
 dayFormatter = DateFormatter('%d')      # Eg, 12
-## see: http://matplotlib.sourceforge.net/examples/pylab_examples/finance_demo.html
+# See:
+# http://matplotlib.sourceforge.net/examples/pylab_examples/finance_demo.html
 
 DTYPE_TABLE = [
     ('closed', float), ('scheduled', float),
@@ -44,15 +46,16 @@ def gene_get_row():
         Dictionary for id-rootname correspondence which will be stored
         if you run ``get_row(node)`` for node with unknown 'rootname'.
     """
-    id2rootname = {0:''}
-    rootname2id = {'':0}
+    id2rootname = {0: ''}
+    rootname2id = {'': 0}
+
     def get_row(node):
         closed = node.Closed()
         scheduled = node.Scheduled()
         closed = (closed and date2num(closed)) or 0
         scheduled = (scheduled and date2num(scheduled)) or 0
         clock = node.Clock()
-        clock = (clock and sum([k for (i,j,k) in clock])) or 0
+        clock = (clock and sum([k for (i, j, k) in clock])) or 0
         estimate = node.Property('Estimate') or 0
         # find rootid
         rootid = 0
@@ -72,7 +75,7 @@ def get_table(orgnodes, done):
     """
     Get table from org files
     """
-    (get_row, id2rootname) =  gene_get_row()
+    (get_row, id2rootname) = gene_get_row()
     row_list = [
         get_row(node)
         for node in orgnodes
@@ -98,16 +101,16 @@ def plot_clocked_per_day(ax, orgnodes, done, days,
     closed = table['closed']
     lastday = int(numpy.floor(closed[-1]))
     firstday = lastday - days + 1
-    i0 = ((closed - firstday)**2).argmin()
+    i0 = ((closed - firstday) ** 2).argmin()
 
     dates = numpy.arange(days)
-    cpd = numpy.zeros(days, dtype='float') ## clocked per day
+    cpd = numpy.zeros(days, dtype='float')  # clocked per day
     closed0_int = numpy.floor(closed[i0:]).astype(int)
     table0 = table[i0:]
     for i in dates:
         cpd[i] = numpy.extract(closed0_int == firstday + i,
                                table0['clock']).sum()
-    ax.bar(dates+firstday, cpd/60.0, width=1, color='b', alpha=0.3)
+    ax.bar(dates + firstday, cpd / 60.0, width=1, color='b', alpha=0.3)
     ax.set_ylabel(ylabel)
 
 

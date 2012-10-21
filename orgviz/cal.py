@@ -64,7 +64,7 @@ def match_tag(candidate, taglist, default):
     for t in taglist:
         if t in candidate:
             return t
-    return default # if any tag in `candidate` is not in `taglist`
+    return default  # if any tag in `candidate` is not in `taglist`
 
 
 def events_from_node_datelist(node, eid, date_in_range):
@@ -85,7 +85,7 @@ def events_from_node_datelist(node, eid, date_in_range):
         if date_in_range(dtstart) or date_in_range(dtend):
             summary = summary_from_node(node)
             if num > 1:
-                summary += " (%d/%d)" % (i+1, num)
+                summary += " (%d/%d)" % (i + 1, num)
             event = gene_event(summary, dtstart, dtend)
             event['id'] = eid
             eventlist.append(event)
