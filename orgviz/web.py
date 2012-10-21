@@ -32,8 +32,13 @@ def get_orgnodes(filename):
         app.logger.debug("re-load org file '{0}'".format(filename))
         orgnodes = list(orgparse.load(filename).traverse(include_self=False))
         if not app.config['NO_CACHE']:
-            cache.set(cachename_orgnodes, orgnodes)
-            cache.set(cachename_lastmtime, mtime)
+            try:
+                cache.set(cachename_orgnodes, orgnodes)
+                cache.set(cachename_lastmtime, mtime)
+            except RuntimeError as e:
+                app.logger.error(
+                    'Error while loading {0}.  Probably it is too big.\n'
+                    'Got: {1}'.format(filename, e))
     else:
         app.logger.debug("use cache for org file '{0}'".format(filename))
     return orgnodes
