@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ ! -f "orgviz/__init__.py" ]
 then
     echo "execute this script at root of the working directory"
@@ -38,10 +40,10 @@ mkdir -p $tmpdir
 [ -e "$hk_zippath" ] || wget $hk_url -O $hk_zippath
 [ -e "$cb_zippath" ] || wget $cb_url -O $cb_zippath
 [ -e "$tg_zippath" ] || wget $tg_url -O $tg_zippath
-rm -r $tmpdir/$fc_name/
-rm -r $tmpdir/$hk_name-*/
-rm -r $tmpdir/$cb_name/
-rm -r $tmpdir/$tg_name-*/
+rm -rf $tmpdir/$fc_name/
+rm -rf $tmpdir/$hk_name-*/
+rm -rf $tmpdir/$cb_name/
+rm -rf $tmpdir/$tg_name-*/
 unzip $fc_zippath -d $tmpdir
 unzip $hk_zippath -d $tmpdir
 unzip $cb_zippath -d $tmpdir
