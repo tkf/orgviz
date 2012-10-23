@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -9,6 +9,7 @@ then
 fi
 
 tmpdir=tmp
+logf=$tmpdir/setup-jslib.log
 destdir="orgviz/static/"
 libdir=$destdir/lib
 
@@ -32,23 +33,37 @@ tg_zipname=$tg_name.zip
 tg_url=https://github.com/timeglider/jquery_widget/zipball/master
 tg_zippath=$tmpdir/$tg_zipname
 
+log-it(){
+    {
+        echo
+        echo "------------------------------------------------------------"
+        date
+        echo "$@"
+        echo
+    } >> $logf
+}
 
 mkdir -p $destdir
 mkdir -p $tmpdir
+rm -rf $logf
 
-[ -e "$fc_zippath" ] || wget $fc_url -O $fc_zippath
-[ -e "$hk_zippath" ] || wget $hk_url -O $hk_zippath
-[ -e "$cb_zippath" ] || wget $cb_url -O $cb_zippath
-[ -e "$tg_zippath" ] || wget $tg_url -O $tg_zippath
+log-it "Donload JS libraries"
+[ -e "$fc_zippath" ] || wget $fc_url -O $fc_zippath -a $logf
+[ -e "$hk_zippath" ] || wget $hk_url -O $hk_zippath -a $logf
+[ -e "$cb_zippath" ] || wget $cb_url -O $cb_zippath -a $logf
+[ -e "$tg_zippath" ] || wget $tg_url -O $tg_zippath -a $logf
 rm -rf $tmpdir/$fc_name/
 rm -rf $tmpdir/$hk_name-*/
 rm -rf $tmpdir/$cb_name/
-rm -rf $tmpdir/$tg_name-*/
-unzip $fc_zippath -d $tmpdir
-unzip $hk_zippath -d $tmpdir
-unzip $cb_zippath -d $tmpdir
-unzip $tg_zippath -d $tmpdir
 
+log-it "Decompress JS libraries"
+rm -rf $tmpdir/$tg_name-*/
+unzip $fc_zippath -d $tmpdir >> $logf
+unzip $hk_zippath -d $tmpdir >> $logf
+unzip $cb_zippath -d $tmpdir >> $logf
+unzip $tg_zippath -d $tmpdir >> $logf
+
+log-it "Copy JS libraries"
 cp -r $tmpdir/$fc_name/fullcalendar $destdir
 cp -r $tmpdir/$fc_name/jquery $destdir
 cp -r $tmpdir/$hk_name-*/jquery.hotkeys.js $destdir/jquery
