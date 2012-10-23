@@ -1,7 +1,7 @@
 ENV = env
 ORGVIZ_OPTS =
 
-.PHONY : run requirements env clean-env clean
+.PHONY : run requirements env clean-env clean jslib clean-tmp
 
 
 run: requirements
@@ -21,6 +21,15 @@ $(ENV)/bin/activate:
 
 clean-env:
 	rm -rf $(ENV)
+
+
+### JS libraries
+
+jslib:
+	./setup-jslib.sh
+
+clean-tmp:
+	rm -rf tmp
 
 
 ### Coffee

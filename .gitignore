@@ -2,6 +2,7 @@
 MANIFEST
 doc/build
 env
+tmp
 orgviz/static/*.js
 orgviz/static/lib/
 orgviz/static/colorbox/
