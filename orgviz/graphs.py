@@ -9,6 +9,8 @@ import numpy
 from matplotlib.dates import date2num
 from datetime import datetime
 
+from orgparse.date import total_minutes
+
 from orgviz.dones import find_rootname
 
 ## timezone = matplotlib.dates.pytz.timezone('Europe/Paris')
@@ -50,13 +52,15 @@ def gene_get_row():
     rootname2id = {'': 0}
 
     def get_row(node):
-        closed = node.Closed()
-        scheduled = node.Scheduled()
-        closed = (closed and date2num(closed)) or 0
-        scheduled = (scheduled and date2num(scheduled)) or 0
-        clock = node.Clock()
-        clock = (clock and sum([k for (i, j, k) in clock])) or 0
-        estimate = node.Property('Estimate') or 0
+        closed = node.closed
+        scheduled = node.scheduled
+        closed = (closed and date2num(closed.start)) or 0
+        scheduled = (scheduled and date2num(scheduled.start)) or 0
+        clock = node.clock
+        clock = (clock and
+                 # Check: is using minute correct?
+                 sum([total_minutes(c.duration) for c in clock])) or 0
+        estimate = node.get_property('Estimate') or 0
         # find rootid
         rootid = 0
         rootname = find_rootname(node)
@@ -79,7 +83,7 @@ def get_table(orgnodes, done):
     row_list = [
         get_row(node)
         for node in orgnodes
-        if node.Todo() == done
+        if node.todo == done
         ]
     table = numpy.array(row_list, dtype=DTYPE_TABLE)
     table.sort(order='closed')
@@ -127,10 +131,10 @@ def gene_clocked_par_day(orgnodes, done, days=30):
 
 
 def time_array_closed(orgnodes, done, start):
-    time_array = numpy.array(date2num([c for c in (
-        node.Closed()
+    time_array = numpy.array(date2num([c.start for c in (
+        node.closed
         for node in orgnodes
-        if node.Todo() == done
+        if node.todo == done
         ) if c]))
     return numpy.take(time_array, numpy.where(time_array > start))[0]
 

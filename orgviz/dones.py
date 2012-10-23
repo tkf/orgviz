@@ -4,6 +4,8 @@
 import os
 import datetime
 
+from orgparse.date import total_minutes
+
 
 def minute_to_str(m):
     """
@@ -20,7 +22,7 @@ def rootname_from_archive_olpath(node):
     Find rootname from ARCHIVE_OLPATH property.
     Return None if not found.
     """
-    olpath = node.Property('ARCHIVE_OLPATH')
+    olpath = node.get_property('ARCHIVE_OLPATH')
     if olpath:
         olpathlist = olpath.split('/', 1)
         if len(olpathlist) > 1:
@@ -38,12 +40,12 @@ def find_rootname(node):
     rootname = rootname_from_archive_olpath(node)
     if not rootname:
         n = node
-        p = node.Parent()
-        while p != None:
+        p = node.parent
+        while not p.is_root():
             n = p
-            p = p.Parent()
+            p = p.parent
         # n is root node
-        rootname = rootname_from_archive_olpath(n) or n.Heading()
+        rootname = rootname_from_archive_olpath(n) or n.heading
     return rootname
 
 
@@ -53,23 +55,23 @@ def key_row_from_node(node):
     key object for sorting table and dictionary which has following
     keywords: heading, closed, scheduled, effort, clocksum, rootname.
     """
-    heading = node.Heading()
+    heading = node.heading
     # find rootname
     rootname = find_rootname(node)
     if heading == rootname:
         rootname = ""
     # calc clocksum if CLOCK exists
     clocksum = ''
-    clocklist = node.Clock()
+    clocklist = node.clock
     if clocklist:
-        clocksum = sum([k for (i, j, k) in clocklist])
-    closed = node.Closed()
-    scheduled = node.Scheduled()
-    effort = node.Property('Effort')
+        clocksum = sum([total_minutes(c.duration) for c in clocklist])
+    closed = node.closed
+    scheduled = node.scheduled
+    effort = node.get_property('Effort')
     row = dict(
         heading=heading,
-        closed=closed and closed.strftime('%a %d %b %H:%M'),
-        scheduled=scheduled and scheduled.strftime('%a %d %b %H:%M'),
+        closed=closed and closed.start.strftime('%a %d %b %H:%M'),
+        scheduled=scheduled and scheduled.start.strftime('%a %d %b %H:%M'),
         effort=effort and minute_to_str(effort),
         clocksum=clocksum and minute_to_str(clocksum),
         rootname=rootname,
@@ -132,7 +134,7 @@ def get_data(orgnodes_list, orgpath_list, done):
     orgname_list = unique_name_from_paths(orgpath_list)
     for (nodelist, orgname) in zip(orgnodes_list, orgname_list):
         for node in nodelist:
-            if node.Todo() == done:
+            if node.todo == done:
                 (key, row) = key_row_from_node(node)
                 if key:
                     row['orgname'] = orgname
