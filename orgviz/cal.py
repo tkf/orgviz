@@ -3,6 +3,8 @@ import datetime
 
 import orgparse.date
 
+from .event import nodes_to_events
+
 
 def summary_from_node(node):
     heading = node.heading
@@ -93,6 +95,16 @@ def events_from_node_datelist(node, eid, date_in_range):
     return eventlist
 
 
+def eventdata_from_event(ev, eid):
+    summary = summary_from_node(ev.node)
+    num = ev.group.num
+    if num > 1:
+        summary += " ({0}/{1})".format(ev.ig + 1, num)
+    eventdata = gene_event(summary, ev.date.start, ev.date.end)
+    eventdata['id'] = eid
+    return eventdata
+
+
 def event_from_node_scheduled(node, eid):
     """
     Generate an event from `Orgnode.Orgnode`` which has scheduled attribute.
@@ -173,6 +185,7 @@ def get_date_in_range(start, end):
     end = datetime.datetime.fromtimestamp(end) if end else None
 
     def date_in_range(date):
+        # FIXME: consider date.end
         date = todate(date)
         if not isinstance(date, (datetime.datetime, datetime.date)):
             return False
@@ -186,39 +199,30 @@ def get_date_in_range(start, end):
     return date_in_range
 
 
-def gene_events(orgnodes_list, orgpath_list, eventclass, eventfilter, stp,
-                start, end):
+def gene_events(orgnodes, eventclass, filters, classifier, start, end):
     get_new_eid = gene_get_new_eid()
     date_in_range = get_date_in_range(start, end)
     events = []
-    for (orgnodes, orgpath) in zip(orgnodes_list, orgpath_list):
-        for node in orgnodes:
-            if not all(f(node, orgpath) for f in eventfilter):
-                continue
-            isstp = stp in node.tags
-            if 'scheduled' in eventclass and \
-               date_in_range(node.scheduled):
-                # t = match_tag(node.Tags(inher=True), taglist, misc)
-                events.append(event_from_node_scheduled(node, get_new_eid()))
-            if 'deadline' in eventclass and \
-               date_in_range(node.deadline):
-                events.append(event_from_node_deadline(node, get_new_eid()))
-            if 'stp' in eventclass and isstp:
-                map(events.append,
-                    events_from_node_datelist(
-                        node, get_new_eid(), date_in_range))
-            if 'closed' in eventclass and node.closed:
-                map(events.append,
-                    events_from_node_closed(
-                        node, get_new_eid(), date_in_range))
-            if 'clock' in eventclass and node.clock:
-                map(events.append,
-                    events_from_node_clock(
-                        node, get_new_eid(), date_in_range))
-            if ('misc' in eventclass and
-                node.has_date() and
-                not (isstp or node.closed)):
-                map(events.append,
-                    events_from_node_misc(
-                        node, get_new_eid(), date_in_range))
+    for event in nodes_to_events(
+            orgnodes, eventclass=eventclass,
+            filters=filters, classifier=classifier):
+        if not date_in_range(event.date):
+            continue
+        if event.eventclass == 'scheduled':
+            events.append(event_from_node_scheduled(event.node, get_new_eid()))
+        elif event.eventclass == 'deadline':
+            events.append(event_from_node_deadline(event.node, get_new_eid()))
+        elif event.eventclass == 'closed':
+            map(events.append,
+                events_from_node_closed(
+                    event.node, get_new_eid(), date_in_range))
+        elif event.eventclass == 'clock':
+            map(events.append,
+                events_from_node_clock(
+                    event.node, get_new_eid(), date_in_range))
+        else:
+            eventdata = eventdata_from_event(event)
+            events.append(eventdata)
+            if event.eventclass == 'none':
+                eventdata['color'] = 'gray'
     return events
