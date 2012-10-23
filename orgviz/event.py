@@ -79,3 +79,24 @@ class Event(object):
 
     def __getattr__(self, name):
         return getattr(self.node, name)
+
+
+def single_node_to_events(node):
+    if node.scheduled:
+        yield Event(node.scheduled, node)
+    if node.deadline:
+        yield Event(node.deadline, node)
+    if node.closed:
+        yield Event(node.closed, node)
+    if node.clock:
+        yield Event(node.clock, node)
+    for date in node.datelist:
+        yield Event(date, node)
+    for date in node.rangelist:
+        yield Event(date, node)
+
+
+def nodes_to_events(nodes):
+    for nd in nodes:
+        for ev in single_node_to_events(nd):
+            yield ev
