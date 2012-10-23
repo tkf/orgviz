@@ -30,7 +30,7 @@ def get_orgnodes(filename):
         None in (orgnodes, lastmtime) or
         mtime > lastmtime):
         app.logger.debug("re-load org file '{0}'".format(filename))
-        orgnodes = list(orgparse.load(filename).traverse(include_self=False))
+        orgnodes = list(orgparse.load(filename)[1:])
         if not app.config['NO_CACHE']:
             try:
                 cache.set(cachename_orgnodes, orgnodes)

@@ -5,8 +5,8 @@ import orgparse.date
 
 
 def summary_from_node(node):
-    heading = node.get_heading()
-    tags = node.get_tags()
+    heading = node.heading
+    tags = node.tags
     if tags:
         summary = "%s [%s]" % (heading, "|".join(tags))
         return summary
@@ -72,8 +72,8 @@ def events_from_node_datelist(node, eid, date_in_range):
     Generate list of event from ``Orgnode.Orgnode`` which has datelist
     or rangelist.
     """
-    datelist = node.get_datelist()
-    rangelist = node.get_rangelist()
+    datelist = node.datelist
+    rangelist = node.rangelist
     num = len(datelist) + len(rangelist)
 
     start_end_pairs = []
@@ -97,7 +97,7 @@ def event_from_node_scheduled(node, eid):
     """
     Generate an event from `Orgnode.Orgnode`` which has scheduled attribute.
     """
-    event = gene_event(summary_from_node(node), node.get_scheduled())
+    event = gene_event(summary_from_node(node), node.scheduled)
     event['color'] = 'green'
     event['id'] = eid
     return event
@@ -107,7 +107,7 @@ def event_from_node_deadline(node, eid):
     """
     Generate an event from `Orgnode.Orgnode`` which has deadline attribute.
     """
-    event = gene_event(summary_from_node(node), node.get_deadline())
+    event = gene_event(summary_from_node(node), node.deadline)
     event['color'] = 'red'
     event['id'] = eid
     return event
@@ -117,7 +117,7 @@ def events_from_node_closed(node, eid, date_in_range):
     """
     Generate an event from `Orgnode.Orgnode`` which has closed attribute.
     """
-    closed = node.get_closed()
+    closed = node.closed
     if date_in_range(closed):
         event = gene_event(summary_from_node(node), closed)
         event['color'] = 'blue'
@@ -130,7 +130,7 @@ def events_from_node_clock(node, eid, date_in_range):
     Generate an event from `Orgnode.Orgnode`` which has clock attribute.
     """
     summary = summary_from_node(node)
-    for (cstart, cend, csum) in node.get_clock():
+    for (cstart, cend, csum) in node.clock:
         if (date_in_range(cstart) or date_in_range(cend)) and csum > 0:
             event = gene_event(summary, cstart, cend)
             event['color'] = 'blue'
@@ -195,29 +195,29 @@ def gene_events(orgnodes_list, orgpath_list, eventclass, eventfilter, stp,
         for node in orgnodes:
             if not all(f(node, orgpath) for f in eventfilter):
                 continue
-            isstp = stp in node.get_tags()
+            isstp = stp in node.tags
             if 'scheduled' in eventclass and \
-               date_in_range(node.get_scheduled()):
+               date_in_range(node.scheduled):
                 # t = match_tag(node.Tags(inher=True), taglist, misc)
                 events.append(event_from_node_scheduled(node, get_new_eid()))
             if 'deadline' in eventclass and \
-               date_in_range(node.get_deadline()):
+               date_in_range(node.deadline):
                 events.append(event_from_node_deadline(node, get_new_eid()))
             if 'stp' in eventclass and isstp:
                 map(events.append,
                     events_from_node_datelist(
                         node, get_new_eid(), date_in_range))
-            if 'closed' in eventclass and node.get_closed():
+            if 'closed' in eventclass and node.closed:
                 map(events.append,
                     events_from_node_closed(
                         node, get_new_eid(), date_in_range))
-            if 'clock' in eventclass and node.get_clock():
+            if 'clock' in eventclass and node.clock:
                 map(events.append,
                     events_from_node_clock(
                         node, get_new_eid(), date_in_range))
             if ('misc' in eventclass and
                 node.has_date() and
-                not (isstp or node.get_closed())):
+                not (isstp or node.closed)):
                 map(events.append,
                     events_from_node_misc(
                         node, get_new_eid(), date_in_range))
