@@ -16,6 +16,7 @@ from orgviz.timeline import gene_timeline
 
 
 app = Flask('orgviz')
+app.config.from_object('orgviz.default_config')
 cache = SimpleCache(default_timeout=60 * 60 * 24)
 
 

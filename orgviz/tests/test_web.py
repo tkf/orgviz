@@ -23,8 +23,6 @@ class TestWebEventsData(unittest.TestCase):
         cls.tmpdir = tempfile.mkdtemp(prefix=TMP_PREFIX)
         cls.org_file = os.path.join(cls.tmpdir, 'test.org')
         web.app.config['ORG_FILE_COMMON'] = [cls.org_file]
-        web.app.config['ORG_FILE_CAL'] = []
-        web.app.config['NO_CACHE'] = True
         cls.app = web.app.test_client()
 
     @classmethod
