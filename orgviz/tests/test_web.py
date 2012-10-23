@@ -29,6 +29,9 @@ class TestWebEventsData(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(cls.tmpdir)
 
+    def setUp(self):
+        web.cache.clear()
+
     def write_org_file(self, text):
         with open(self.org_file, 'w') as f:
             f.write(textwrap.dedent(text))
