@@ -106,7 +106,7 @@ def _nodes_to_events(nodes, **kwds):
             yield ev
 
 
-def nodes_to_events(nodes, filters=[], eventclass=[], classifier=None):
+def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     """
     Iterate over events in org nodes.
 
@@ -130,11 +130,47 @@ def nodes_to_events(nodes, filters=[], eventclass=[], classifier=None):
         be determined by other method.
         `ORG_CAL_EVENT_CLASSIFIER` is used for this argument.
 
+    >>> from orgparse import loads
+    >>> nodes = loads('''
+    ... * Node 1
+    ...   SCHEDULED: <2012-02-26 Sun>
+    ... * Node 2
+    ...   <2012-02-24 Fri>, <2012-02-25 Sat>
+    ... ''').env.nodes[1:]
+    >>> events = list(nodes_to_events(nodes))
+    >>> events                   # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+    [<orgviz.event.Event object at 0x...>,
+     <orgviz.event.Event object at 0x...>,
+     <orgviz.event.Event object at 0x...>]
+    >>> events[1].eventclass
+    'none'
+
+    >>> only_date_list = lambda ev: ev.node.datelist
+    >>> events = list(nodes_to_events(nodes, filters=[only_date_list]))
+    >>> events                   # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+    [<orgviz.event.Event object at 0x...>]
+    >>> events[0].node.heading
+    'Node 2'
+
+    >>> events = list(nodes_to_events(nodes, eventclass=['scheduled']))
+    >>> events                   # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+    [<orgviz.event.Event object at 0x...>]
+    >>> events[0].node.heading
+    'Node 1'
+
+    >>> events = list(nodes_to_events(nodes, classifier=lambda _: 'spam'))
+    >>> events                   # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+    [<orgviz.event.Event object at 0x...>,
+     <orgviz.event.Event object at 0x...>,
+     <orgviz.event.Event object at 0x...>]
+    >>> events[1].eventclass
+    'spam'
+
     """
-    if isinstance(eventclass, basestring):
-        eventclass = [eventclass]
-    for ev in _nodes_to_events(classifier=classifier):
+    if isinstance(eventclass, basestring) and eventclass != 'all':
+        raise ValueError("`eventclass` must be a list or string 'all'.")
+    for ev in _nodes_to_events(nodes, classifier=classifier):
         if not all(f(ev) for f in filters):
             continue
-        if ev.eventclass in eventclass:
+        if eventclass == 'all' or ev.eventclass in eventclass:
             yield ev
