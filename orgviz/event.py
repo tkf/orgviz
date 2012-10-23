@@ -42,10 +42,11 @@ class Event(object):
 
     """
 
-    def __init__(self, date, node, eventclass=None):
+    def __init__(self, date, node, eventclass=None, classifier=None):
         self._date = date
         self._node = node
         self._eventclass = eventclass
+        self._classifier = classifier
 
     @property
     def eventclass(self):
@@ -55,6 +56,9 @@ class Event(object):
             for (ec, dc) in EVENTCLASS_DATECLASS_MAP:
                 if isinstance(self.date, dc):
                     return ec
+        if self._classifier:
+            return self._classifier(self.node) or 'none'
+        return 'none'
 
     @property
     def date(self):
@@ -81,7 +85,7 @@ class Event(object):
         return getattr(self.node, name)
 
 
-def single_node_to_events(node):
+def single_node_to_events(node, **kwds):
     if node.scheduled:
         yield Event(node.scheduled, node)
     if node.deadline:
@@ -91,12 +95,43 @@ def single_node_to_events(node):
     if node.clock:
         yield Event(node.clock, node)
     for date in node.datelist:
-        yield Event(date, node)
+        yield Event(date, node, **kwds)
     for date in node.rangelist:
-        yield Event(date, node)
+        yield Event(date, node, **kwds)
 
 
-def nodes_to_events(nodes):
+def _nodes_to_events(nodes, **kwds):
     for nd in nodes:
-        for ev in single_node_to_events(nd):
+        for ev in single_node_to_events(nd, **kwds):
+            yield ev
+
+
+def nodes_to_events(nodes, filters=[], eventclass=[], classifier=None):
+    """
+    Iterate over events in org nodes.
+
+    :arg iterable nodes:
+        Iterable of org node.
+
+    :type  filters: list of callable
+    :arg   filters:
+        Each function is called with event object.  Event is included
+        only when all the functions return True.
+
+    :type  eventclass: str or list of str
+    :arg   eventclass:
+        Event class to include.
+
+    :type  classifier: None or callable
+    :arg   classifier:
+        A function to determine eventclass of a event, when it cannot
+        be determined by other method.
+
+    """
+    if isinstance(eventclass, basestring):
+        eventclass = [eventclass]
+    for ev in _nodes_to_events(classifier=classifier):
+        if not all(f(ev) for f in filters):
+            continue
+        if ev.eventclass in eventclass:
             yield ev
