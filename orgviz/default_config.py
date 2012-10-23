@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------- #
 # Global configuration
 
-NO_CACHE = False
+ORG_USE_CACHE = True
 """
 Use in-memory cache for org-mode files to improve response speed.
 """

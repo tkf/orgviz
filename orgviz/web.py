@@ -27,12 +27,12 @@ def get_orgnodes(filename):
     orgnodes = cache.get(cachename_orgnodes)
     lastmtime = cache.get(cachename_lastmtime)
     mtime = os.path.getmtime(filename)
-    if (app.config['NO_CACHE'] or
+    if (not app.config['ORG_USE_CACHE'] or
         None in (orgnodes, lastmtime) or
         mtime > lastmtime):
         app.logger.debug("re-load org file '{0}'".format(filename))
         orgnodes = list(orgparse.load(filename)[1:])
-        if not app.config['NO_CACHE']:
+        if app.config['ORG_USE_CACHE']:
             try:
                 cache.set(cachename_orgnodes, orgnodes)
                 cache.set(cachename_lastmtime, mtime)
@@ -107,7 +107,7 @@ def get_graph(name, orgpaths, *args, **kwds):
     filename = '{0}.png'.format(
         hashlib.md5(figname.encode('utf-8')).hexdigest())
     filepath = os.path.join(app.config['CACHE_DIR'], filename)
-    if (app.config['NO_CACHE'] or
+    if (not app.config['ORG_USE_CACHE'] or
         not os.path.exists(filepath) or
         any(older_than(filepath, orgpaths))):
         app.logger.debug(
@@ -347,7 +347,7 @@ def main():
     update_if_specified('ORG_FILE_TIMELINE', args.org_timeline)
     update_if_specified('ORG_TAGS', args.tag)
     app.config['CACHE_DIR'] = cache_dir = args.cache_dir
-    app.config['NO_CACHE'] = args.no_cache
+    app.config['ORG_USE_CACHE'] = not args.no_cache
 
     for key in app.config:
         if key.startswith('ORG_FILE_'):
