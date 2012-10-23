@@ -25,7 +25,7 @@ def todate(date):
     Convert OrgDate object to datetime, return as-is for other types.
     """
     if isinstance(date, orgparse.date.OrgDate):
-        return date.get_start()
+        return date.start
     else:
         return date
 
@@ -78,7 +78,7 @@ def events_from_node_datelist(node, eid, date_in_range):
 
     start_end_pairs = []
     for dt in rangelist + datelist:
-        start_end_pairs.append((dt.get_start(), dt.get_end()))
+        start_end_pairs.append((dt.start, dt.end))
 
     eventlist = []
     for (i, (dtstart, dtend)) in enumerate(start_end_pairs):
