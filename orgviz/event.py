@@ -117,15 +117,18 @@ def nodes_to_events(nodes, filters=[], eventclass=[], classifier=None):
     :arg   filters:
         Each function is called with event object.  Event is included
         only when all the functions return True.
+        `ORG_CAL_FILTERS` is used for this argument.
 
     :type  eventclass: str or list of str
     :arg   eventclass:
         Event class to include.
+        JS client specifies this argument via `event_dates` request.
 
     :type  classifier: None or callable
     :arg   classifier:
         A function to determine eventclass of a event, when it cannot
         be determined by other method.
+        `ORG_CAL_EVENT_CLASSIFIER` is used for this argument.
 
     """
     if isinstance(eventclass, basestring):
