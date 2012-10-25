@@ -48,27 +48,6 @@ def gene_event(summary, dtstart, dtend=None):
     return event
 
 
-def match_tag(candidate, taglist, default):
-    """
-    Return a first matched tag in both ``candidate`` and ``taglist``
-    if exists, else ``default``.
-
-    Examples
-    --------
-    >>> match_tag([1,2,3], [2,3,4], 0)
-    2
-    >>> match_tag([1,2,3], [3,2,4], 0)
-    3
-    >>> match_tag([1,2,3], [4,5,6], 0)
-    0
-
-    """
-    for t in taglist:
-        if t in candidate:
-            return t
-    return default  # if any tag in `candidate` is not in `taglist`
-
-
 EVENTCLASS_COLOR_MAP = {
     'scheduled': 'green',
     'deadline': 'red',
