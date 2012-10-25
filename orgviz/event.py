@@ -250,9 +250,10 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None,
     if isinstance(eventclass, basestring) and eventclass != 'all':
         raise ValueError("`eventclass` must be a list or string 'all'.")
     for ev in _nodes_to_events(nodes, classifier=classifier):
-        if not all(f(ev) for f in filters):
-            continue
         if not date_in_range(ev.date):
             continue
-        if eventclass == 'all' or ev.eventclass in eventclass:
-            yield ev
+        if eventclass != 'all' and ev.eventclass not in eventclass:
+            continue
+        if not all(f(ev) for f in filters):
+            continue
+        yield ev
