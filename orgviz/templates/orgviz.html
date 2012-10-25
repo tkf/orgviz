@@ -106,8 +106,19 @@
       <dd> Move the calendar one step back/forward
       <dt> 1-9
       <dd> Change perspective
-      <dt> z, x, c, v, b, n
-      <dd> Toggle on/off: deadline, scheduled, STP, closed, clock, misc
+      <dt> {% for (name, key) in cal_eventclasses -%}
+             {% if key %}
+               {% if not loop.first %}, {% endif -%}
+               {{ key }}
+             {% endif %}
+           {%- endfor %}
+      <dd> Toggle on/off:
+           {% for (name, key) in cal_eventclasses -%}
+             {% if key %}
+               {% if not loop.first %}, {% endif -%}
+               {{ name }}
+             {% endif %}
+           {%- endfor %}
       <dt> q, w, e, r, t
       <dd> Change view: month, week, day, week (agenda), day (agenda)
       <dt> Shift + 1-9
@@ -147,24 +158,13 @@
   <div id='calendar-control-advanced'>
     <form>
       Event:
-      <input type="checkbox"
-             name="eventclass-deadline" value="eventclass-deadline"
-             id="eventclass-deadline" checked="yes" /> Deadline (z)
-      <input type="checkbox"
-             name="eventclass-scheduled" value="eventclass-scheduled"
-             id="eventclass-scheduled" checked="yes" /> Scheduled (x)
-      <input type="checkbox"
-             name="eventclass-stp" value="eventclass-stp"
-             id="eventclass-stp" checked="yes" /> STP (c)
-      <input type="checkbox"
-             name="eventclass-closed" value="eventclass-closed"
-             id="eventclass-closed"/> Closed (v)
-      <input type="checkbox"
-             name="eventclass-clock" value="eventclass-clock"
-             id="eventclass-clock"/> Clock (b)
-      <input type="checkbox"
-             name="eventclass-misc" value="eventclass-misc"
-             id="eventclass-misc"/> misc (n)
+      {% for (name, key) in cal_eventclasses -%}
+      <input type="checkbox" class="eventclass-checkbox"
+             name="eventclass-{{ name }}" value="eventclass-{{ name }}"
+             data-key="{{ key }}" data-name="{{ name }}"
+             id="eventclass-{{ name }}" />
+      {{ name }} {%- if key %} ({{ key }}) {%- endif %}
+      {% endfor -%}
     </form>
     <form>
       Filter:
