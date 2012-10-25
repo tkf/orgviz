@@ -158,7 +158,8 @@ def _nodes_to_events(nodes, **kwds):
             yield ev
 
 
-def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
+def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None,
+                    start=None, end=None):
     """
     Iterate over events in org nodes.
 
@@ -181,6 +182,11 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
         A function to determine eventclass of a event, when it cannot
         be determined by other method.
         `ORG_CAL_EVENT_CLASSIFIER` is used for this argument.
+
+    :type  start: anything `date.OrgDateClock` can handle
+    :arg   start: timestamp
+    :type    end: anything `date.OrgDateClock` can handle
+    :arg     end: timestamp
 
     >>> from orgparse import loads
     >>> nodes = loads('''
@@ -237,10 +243,16 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     'spam'
 
     """
+    if start is None or end is None:
+        date_in_range = lambda _: True
+    else:
+        date_in_range = date.OrgDate(start, end).has_overlap
     if isinstance(eventclass, basestring) and eventclass != 'all':
         raise ValueError("`eventclass` must be a list or string 'all'.")
     for ev in _nodes_to_events(nodes, classifier=classifier):
         if not all(f(ev) for f in filters):
+            continue
+        if not date_in_range(ev.date):
             continue
         if eventclass == 'all' or ev.eventclass in eventclass:
             yield ev

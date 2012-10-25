@@ -76,13 +76,11 @@ def gene_events(orgnodes, eventclass, filters, classifier, start, end):
     :arg         end: timestamp
 
     """
-    daterange = orgparse.date.OrgDate(start, end)
     events = []
     for (eid, event) in enumerate(nodes_to_events(
             orgnodes, eventclass=eventclass,
-            filters=filters, classifier=classifier)):
-        if not daterange.has_overlap(event.date):
-            continue
+            filters=filters, classifier=classifier,
+            start=start, end=end)):
         if isinstance(event.date, orgparse.date.OrgDateClock) and \
                event.date.duration <= 0:
             continue
