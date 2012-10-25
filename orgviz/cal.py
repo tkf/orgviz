@@ -69,59 +69,26 @@ def match_tag(candidate, taglist, default):
     return default  # if any tag in `candidate` is not in `taglist`
 
 
+EVENTCLASS_COLOR_MAP = {
+    'scheduled': 'green',
+    'deadline': 'red',
+    'closed': 'blue',
+    'clock': 'blue',
+    'none': 'gray',
+}
+
+
 def eventdata_from_event(ev, eid):
     summary = summary_from_node(ev.node)
     num = ev.group.num
     if num > 1:
         summary += " ({0}/{1})".format(ev.ig + 1, num)
     eventdata = gene_event(summary, ev.date.start, ev.date.end)
+    color = EVENTCLASS_COLOR_MAP.get(ev.eventclass)
+    if color:
+        eventdata['color'] = color
     eventdata['id'] = eid
     return eventdata
-
-
-def event_from_node_scheduled(node, eid):
-    """
-    Generate an event from `Orgnode.Orgnode`` which has scheduled attribute.
-    """
-    event = gene_event(summary_from_node(node), node.scheduled)
-    event['color'] = 'green'
-    event['id'] = eid
-    return event
-
-
-def event_from_node_deadline(node, eid):
-    """
-    Generate an event from `Orgnode.Orgnode`` which has deadline attribute.
-    """
-    event = gene_event(summary_from_node(node), node.deadline)
-    event['color'] = 'red'
-    event['id'] = eid
-    return event
-
-
-def events_from_node_closed(node, eid, date_in_range):
-    """
-    Generate an event from `Orgnode.Orgnode`` which has closed attribute.
-    """
-    closed = node.closed
-    if date_in_range(closed):
-        event = gene_event(summary_from_node(node), closed)
-        event['color'] = 'blue'
-        event['id'] = eid
-        yield event
-
-
-def events_from_node_clock(node, eid, date_in_range):
-    """
-    Generate an event from `Orgnode.Orgnode`` which has clock attribute.
-    """
-    summary = summary_from_node(node)
-    for (cstart, cend, csum) in node.clock:
-        if (date_in_range(cstart) or date_in_range(cend)) and csum > 0:
-            event = gene_event(summary, cstart, cend)
-            event['color'] = 'blue'
-            event['id'] = eid
-            yield event
 
 
 def gene_get_new_eid():
@@ -186,29 +153,15 @@ def gene_events(orgnodes, eventclass, filters, classifier, start, end):
     """
     get_new_eid = gene_get_new_eid()
     daterange = orgparse.date.OrgDate(start, end)
-    # FIXME: remove date_in_range later:
-    date_in_range = get_date_in_range(start, end)
     events = []
     for event in nodes_to_events(
             orgnodes, eventclass=eventclass,
             filters=filters, classifier=classifier):
         if not daterange.has_overlap(event.date):
             continue
-        if event.eventclass == 'scheduled':
-            events.append(event_from_node_scheduled(event.node, get_new_eid()))
-        elif event.eventclass == 'deadline':
-            events.append(event_from_node_deadline(event.node, get_new_eid()))
-        elif event.eventclass == 'closed':
-            map(events.append,
-                events_from_node_closed(
-                    event.node, get_new_eid(), date_in_range))
-        elif event.eventclass == 'clock':
-            map(events.append,
-                events_from_node_clock(
-                    event.node, get_new_eid(), date_in_range))
-        else:
-            eventdata = eventdata_from_event(event, get_new_eid())
-            events.append(eventdata)
-            if event.eventclass == 'none':
-                eventdata['color'] = 'gray'
+        if isinstance(event.date, orgparse.date.OrgDateClock) and \
+               event.date.duration <= 0:
+            continue
+        eventdata = eventdata_from_event(event, get_new_eid())
+        events.append(eventdata)
     return events
