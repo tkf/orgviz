@@ -115,24 +115,6 @@ def gene_get_new_eid():
     return getter.next
 
 
-def get_date_in_range(start, end):
-    start = datetime.datetime.fromtimestamp(start) if start else None
-    end = datetime.datetime.fromtimestamp(end) if end else None
-
-    def date_in_range(date):
-        date = todate(date)
-        if not isinstance(date, (datetime.datetime, datetime.date)):
-            return False
-        if isinstance(date, datetime.date):  # convert to datetime
-            date = datetime.datetime(*date.timetuple()[:3])
-        if start is not None and date < start:
-            return False
-        if end is not None and end < date:
-            return False
-        return True
-    return date_in_range
-
-
 def gene_events(orgnodes, eventclass, filters, classifier, start, end):
     """
     Return a list of event data for FullCalendar.
