@@ -200,6 +200,23 @@ def get_date_in_range(start, end):
 
 
 def gene_events(orgnodes, eventclass, filters, classifier, start, end):
+    """
+    Return a list of event data for FullCalendar.
+
+    :type   orgnodes: iterative
+    :arg    orgnodes: yields orgparse.node.OrgNode objects
+    :type eventclass: list of str
+    :arg  eventclass: e.g., ``['deadline', 'scheduled']``
+    :type    filters: list of functions
+    :arg     filters: functions specified in `ORG_CAL_FILTERS`.
+    :type classifier: function
+    :arg  classifier: function specified by `ORG_CAL_EVENT_CLASSIFIER`
+    :type      start: int or None
+    :arg       start: timestamp
+    :type        end: int or None
+    :arg         end: timestamp
+
+    """
     get_new_eid = gene_get_new_eid()
     date_in_range = get_date_in_range(start, end)
     events = []
