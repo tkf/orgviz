@@ -207,7 +207,7 @@ def gene_events(orgnodes, eventclass, filters, classifier, start, end):
                 events_from_node_clock(
                     event.node, get_new_eid(), date_in_range))
         else:
-            eventdata = eventdata_from_event(event)
+            eventdata = eventdata_from_event(event, get_new_eid())
             events.append(eventdata)
             if event.eventclass == 'none':
                 eventdata['color'] = 'gray'
