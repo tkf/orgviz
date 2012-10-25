@@ -193,6 +193,10 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     1
     >>> events[1].group.num
     2
+    >>> events[0].group is not events[1].group
+    True
+    >>> events[1].group is not events[2].group
+    False
 
     >>> only_date_list = lambda ev: ev.node.datelist
     >>> events = list(nodes_to_events(nodes, filters=[only_date_list]))
