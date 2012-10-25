@@ -69,32 +69,6 @@ def match_tag(candidate, taglist, default):
     return default  # if any tag in `candidate` is not in `taglist`
 
 
-def events_from_node_datelist(node, eid, date_in_range):
-    """
-    Generate list of event from ``Orgnode.Orgnode`` which has datelist
-    or rangelist.
-    """
-    datelist = node.datelist
-    rangelist = node.rangelist
-    num = len(datelist) + len(rangelist)
-
-    start_end_pairs = []
-    for dt in rangelist + datelist:
-        start_end_pairs.append((dt.start, dt.end))
-
-    eventlist = []
-    for (i, (dtstart, dtend)) in enumerate(start_end_pairs):
-        if date_in_range(dtstart) or date_in_range(dtend):
-            summary = summary_from_node(node)
-            if num > 1:
-                summary += " (%d/%d)" % (i + 1, num)
-            event = gene_event(summary, dtstart, dtend)
-            event['id'] = eid
-            eventlist.append(event)
-
-    return eventlist
-
-
 def eventdata_from_event(ev, eid):
     summary = summary_from_node(ev.node)
     num = ev.group.num
@@ -148,12 +122,6 @@ def events_from_node_clock(node, eid, date_in_range):
             event['color'] = 'blue'
             event['id'] = eid
             yield event
-
-
-def events_from_node_misc(node, eid, date_in_range):
-    for event in events_from_node_datelist(node, eid, date_in_range):
-        event['color'] = 'gray'
-        yield event
 
 
 def gene_get_new_eid():
