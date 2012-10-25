@@ -82,7 +82,7 @@ def gene_events(orgnodes, eventclass, filters, classifier, start, end):
             filters=filters, classifier=classifier,
             start=start, end=end)):
         if isinstance(event.date, orgparse.date.OrgDateClock) and \
-               event.date.duration <= 0:
+               event.date.duration:
             continue
         eventdata = eventdata_from_event(event, eid)
         events.append(eventdata)
