@@ -105,13 +105,10 @@ setFullCalendarUI = (events_data, perspectives) ->
   calendar = $("#calendar")
   getEventclasses = -> (k for k, v of eventclasses when v.attr("checked"))
   getEventfilters = -> (k for k, v of eventfilters when v.attr("checked"))
-  eventclasses =
-    deadline: $("#eventclass-deadline")
-    scheduled: $("#eventclass-scheduled")
-    stp: $("#eventclass-stp")
-    closed: $("#eventclass-closed")
-    clock: $("#eventclass-clock")
-    misc: $("#eventclass-misc")
+  eventclasses = {}
+  for ec in $('input.eventclass-checkbox')
+    ec = $(ec)
+    eventclasses[ec.data('name')] = ec
 
   eventfilters = {}
   $(".eventfilter").each (idx, elem) ->
@@ -194,13 +191,6 @@ setCalendarKeyBind = (doc, cal, cbConf, resizeCalendar, checkAutoReload) ->
     .bind("keydown", "right", -> cal.fullCalendar "next")
     .bind("keydown", "j", getCalScrollUpDown(cal, 100))
     .bind("keydown", "k", getCalScrollUpDown(cal, -100))
-    # change eventclass
-    .bind("keydown", "z", getEventclassToggleFunc(cal, "deadline"))
-    .bind("keydown", "x", getEventclassToggleFunc(cal, "scheduled"))
-    .bind("keydown", "c", getEventclassToggleFunc(cal, "stp"))
-    .bind("keydown", "v", getEventclassToggleFunc(cal, "closed"))
-    .bind("keydown", "b", getEventclassToggleFunc(cal, "clock"))
-    .bind("keydown", "n", getEventclassToggleFunc(cal, "misc"))
     # change views
     .bind("keydown", "q", -> cal.fullCalendar "changeView", "month")
     .bind("keydown", "w", -> cal.fullCalendar "changeView", "basicWeek")
@@ -217,6 +207,13 @@ setCalendarKeyBind = (doc, cal, cbConf, resizeCalendar, checkAutoReload) ->
     # open timeline page
     .bind("keydown", "shift+l",
       -> window.open $("#timeline_link").attr("href") )
+
+  for ec in $('input.eventclass-checkbox')
+    ec = $(ec)
+    key = ec.data("key")
+    if key
+      fun = getEventclassToggleFunc cal, ec.data("name")
+      doc.bind "keydown", key, fun
 
 
 #### Get a function to check the input checkbox and start/stop auo-reload
