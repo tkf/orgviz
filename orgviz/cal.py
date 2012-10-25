@@ -22,19 +22,7 @@ def dt2ut(dt):
     return time.mktime(dt.timetuple())
 
 
-def todate(date):
-    """
-    Convert OrgDate object to datetime, return as-is for other types.
-    """
-    if isinstance(date, orgparse.date.OrgDate):
-        return date.start
-    else:
-        return date
-
-
 def gene_event(summary, dtstart, dtend=None):
-    dtstart = todate(dtstart)
-    dtend = todate(dtend)
     event = {
         'title': summary,
         'start': dt2ut(dtstart),
