@@ -144,8 +144,8 @@ def single_node_to_events(node, **kwds):
         yield Event(node.deadline, node)
     if node.closed:
         yield Event(node.closed, node)
-    if node.clock:
-        yield Event(node.clock, node)
+    for clock in node.clock:
+        yield Event(clock, node)
     for date in node.datelist:
         yield Event(date, node, **kwds)
     for date in node.rangelist:
