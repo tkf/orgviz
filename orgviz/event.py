@@ -81,10 +81,62 @@ class Event(object):
         """
         return self.node.env.filename
 
+    @property
+    def group(self):
+        """
+        :class:`EventGroup` object.
+        """
+        return self._group
+
+    @property
+    def ig(self):
+        """
+        Return the index in event group.
+        """
+        return self._ig
+
     def __getattr__(self, name):
         return getattr(self.node, name)
 
 
+class EventGroup(object):
+
+    """
+    A class to make group of :class:`Event` objects with same eventclass.
+    """
+
+    def __init__(self):
+        self._events = []
+
+    @property
+    def num(self):
+        """
+        Number of event in this group
+        """
+        return len(self._events)
+
+    def _append(self, ev):
+        ev._group = self
+        ev._ig = self.num
+        self._events.append(ev)
+
+
+def grouper(events_generator):
+    def wrapper(*args, **kwds):
+        groups = {}
+        for event in events_generator(*args, **kwds):
+            ec = event.eventclass
+            if ec in groups:
+                evgroup = groups[ec]
+            else:
+                evgroup = EventGroup()
+                groups[ec] = evgroup
+            evgroup._append(event)
+            yield event
+    return wrapper
+
+
+@grouper
 def single_node_to_events(node, **kwds):
     if node.scheduled:
         yield Event(node.scheduled, node)
@@ -92,8 +144,8 @@ def single_node_to_events(node, **kwds):
         yield Event(node.deadline, node)
     if node.closed:
         yield Event(node.closed, node)
-    if node.clock:
-        yield Event(node.clock, node)
+    for clock in node.clock:
+        yield Event(clock, node)
     for date in node.datelist:
         yield Event(date, node, **kwds)
     for date in node.rangelist:
@@ -106,7 +158,8 @@ def _nodes_to_events(nodes, **kwds):
             yield ev
 
 
-def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
+def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None,
+                    start=None, end=None):
     """
     Iterate over events in org nodes.
 
@@ -130,6 +183,11 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
         be determined by other method.
         `ORG_CAL_EVENT_CLASSIFIER` is used for this argument.
 
+    :type  start: anything `date.OrgDateClock` can handle
+    :arg   start: timestamp
+    :type    end: anything `date.OrgDateClock` can handle
+    :arg     end: timestamp
+
     >>> from orgparse import loads
     >>> nodes = loads('''
     ... * Node 1
@@ -142,8 +200,26 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     [<orgviz.event.Event object at 0x...>,
      <orgviz.event.Event object at 0x...>,
      <orgviz.event.Event object at 0x...>]
+    >>> events[0].eventclass
+    'scheduled'
     >>> events[1].eventclass
     'none'
+    >>> events[2].eventclass
+    'none'
+    >>> events[0].group.num
+    1
+    >>> events[1].group.num
+    2
+    >>> events[0].group is not events[1].group
+    True
+    >>> events[1].group is not events[2].group
+    False
+    >>> events[0].ig
+    0
+    >>> events[1].ig
+    0
+    >>> events[2].ig
+    1
 
     >>> only_date_list = lambda ev: ev.node.datelist
     >>> events = list(nodes_to_events(nodes, filters=[only_date_list]))
@@ -167,10 +243,16 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     'spam'
 
     """
+    if start is None or end is None:
+        date_in_range = lambda _: True
+    else:
+        date_in_range = date.OrgDate(start, end).has_overlap
     if isinstance(eventclass, basestring) and eventclass != 'all':
         raise ValueError("`eventclass` must be a list or string 'all'.")
     for ev in _nodes_to_events(nodes, classifier=classifier):
         if not all(f(ev) for f in filters):
+            continue
+        if not date_in_range(ev.date):
             continue
         if eventclass == 'all' or ev.eventclass in eventclass:
             yield ev

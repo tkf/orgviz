@@ -162,18 +162,19 @@ def events_data():
     if request.args.get('eventclass'):  # is not None or ''
         eventclass = request.args['eventclass'].split(',')
     else:
-        eventclass = ['deadline', 'scheduled', 'stp']
+        eventclass = ['deadline', 'scheduled']
     if request.args.get('eventfilter'):  # is not None or ''
         eventfilter = [
             app.config['ORG_CAL_FILTERS'][int(i)][1] for i in
             request.args['eventfilter'].split(',')]
     else:
         eventfilter = []
+    classifier = app.config['ORG_CAL_EVENT_CLASSIFIER']
     orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_CAL']
-    orgnodes_list = map(get_orgnodes, orgpath_list)
+    orgnodes = orgnodes_from_paths(orgpath_list)
     events = gene_events(
-        orgnodes_list, orgpath_list,
-        eventclass=eventclass, eventfilter=eventfilter, stp='STP',
+        orgnodes,
+        eventclass=eventclass, filters=eventfilter, classifier=classifier,
         start=start, end=end)
     return listjsonify(events)
 
