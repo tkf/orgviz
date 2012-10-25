@@ -91,30 +91,6 @@ def eventdata_from_event(ev, eid):
     return eventdata
 
 
-def gene_get_new_eid():
-    """
-    Generate unique id getter function
-
-    Examples
-    --------
-    >>> getter = gene_get_new_eid()
-    >>> getter()
-    0
-    >>> getter()
-    1
-    >>> [getter() for _ in range(10)]
-    [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-
-    """
-    def get_new_eid():
-        i = 0
-        while True:
-            yield i
-            i += 1
-    getter = get_new_eid()
-    return getter.next
-
-
 def gene_events(orgnodes, eventclass, filters, classifier, start, end):
     """
     Return a list of event data for FullCalendar.
@@ -133,17 +109,16 @@ def gene_events(orgnodes, eventclass, filters, classifier, start, end):
     :arg         end: timestamp
 
     """
-    get_new_eid = gene_get_new_eid()
     daterange = orgparse.date.OrgDate(start, end)
     events = []
-    for event in nodes_to_events(
+    for (eid, event) in enumerate(nodes_to_events(
             orgnodes, eventclass=eventclass,
-            filters=filters, classifier=classifier):
+            filters=filters, classifier=classifier)):
         if not daterange.has_overlap(event.date):
             continue
         if isinstance(event.date, orgparse.date.OrgDateClock) and \
                event.date.duration <= 0:
             continue
-        eventdata = eventdata_from_event(event, get_new_eid())
+        eventdata = eventdata_from_event(event, eid)
         events.append(eventdata)
     return events
