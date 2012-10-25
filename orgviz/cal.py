@@ -185,7 +185,6 @@ def get_date_in_range(start, end):
     end = datetime.datetime.fromtimestamp(end) if end else None
 
     def date_in_range(date):
-        # FIXME: consider date.end
         date = todate(date)
         if not isinstance(date, (datetime.datetime, datetime.date)):
             return False
@@ -218,12 +217,14 @@ def gene_events(orgnodes, eventclass, filters, classifier, start, end):
 
     """
     get_new_eid = gene_get_new_eid()
+    daterange = orgparse.date.OrgDate(start, end)
+    # FIXME: remove date_in_range later:
     date_in_range = get_date_in_range(start, end)
     events = []
     for event in nodes_to_events(
             orgnodes, eventclass=eventclass,
             filters=filters, classifier=classifier):
-        if not date_in_range(event.date):
+        if not daterange.has_overlap(event.date):
             continue
         if event.eventclass == 'scheduled':
             events.append(event_from_node_scheduled(event.node, get_new_eid()))
