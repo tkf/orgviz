@@ -88,6 +88,13 @@ class Event(object):
         """
         return self._group
 
+    @property
+    def ig(self):
+        """
+        Return the index in event group.
+        """
+        return self._ig
+
     def __getattr__(self, name):
         return getattr(self.node, name)
 
@@ -108,6 +115,11 @@ class EventGroup(object):
         """
         return len(self._events)
 
+    def _append(self, ev):
+        ev._group = self
+        ev._ig = self.num
+        self._events.append(ev)
+
 
 def grouper(events_generator):
     def wrapper(*args, **kwds):
@@ -115,12 +127,11 @@ def grouper(events_generator):
         for event in events_generator(*args, **kwds):
             ec = event.eventclass
             if ec in groups:
-                eggroup = groups[ec]
+                evgroup = groups[ec]
             else:
-                eggroup = EventGroup()
-                groups[ec] = eggroup
-            event._group = eggroup
-            eggroup._events.append(event)
+                evgroup = EventGroup()
+                groups[ec] = evgroup
+            evgroup._append(event)
             yield event
     return wrapper
 
@@ -197,6 +208,12 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     True
     >>> events[1].group is not events[2].group
     False
+    >>> events[0].ig
+    0
+    >>> events[1].ig
+    0
+    >>> events[2].ig
+    1
 
     >>> only_date_list = lambda ev: ev.node.datelist
     >>> events = list(nodes_to_events(nodes, filters=[only_date_list]))
