@@ -366,7 +366,7 @@ def main():
             file(args.profile, 'w'),
             args.profile_sort_by)
 
-    app.run(port=args.port)
+    app.run(port=args.port, extra_files=args.conf and [args.conf])
 
 
 if __name__ == "__main__":
