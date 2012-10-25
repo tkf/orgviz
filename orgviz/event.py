@@ -81,10 +81,51 @@ class Event(object):
         """
         return self.node.env.filename
 
+    @property
+    def group(self):
+        """
+        :class:`EventGroup` object.
+        """
+        return self._group
+
     def __getattr__(self, name):
         return getattr(self.node, name)
 
 
+class EventGroup(object):
+
+    """
+    A class to make group of :class:`Event` objects with same eventclass.
+    """
+
+    def __init__(self):
+        self._events = []
+
+    @property
+    def num(self):
+        """
+        Number of event in this group
+        """
+        return len(self._events)
+
+
+def grouper(events_generator):
+    def wrapper(*args, **kwds):
+        groups = {}
+        for event in events_generator(*args, **kwds):
+            ec = event.eventclass
+            if ec in groups:
+                eggroup = groups[ec]
+            else:
+                eggroup = EventGroup()
+                groups[ec] = eggroup
+            event._group = eggroup
+            eggroup._events.append(event)
+            yield event
+    return wrapper
+
+
+@grouper
 def single_node_to_events(node, **kwds):
     if node.scheduled:
         yield Event(node.scheduled, node)
@@ -142,8 +183,16 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None):
     [<orgviz.event.Event object at 0x...>,
      <orgviz.event.Event object at 0x...>,
      <orgviz.event.Event object at 0x...>]
+    >>> events[0].eventclass
+    'scheduled'
     >>> events[1].eventclass
     'none'
+    >>> events[2].eventclass
+    'none'
+    >>> events[0].group.num
+    1
+    >>> events[1].group.num
+    2
 
     >>> only_date_list = lambda ev: ev.node.datelist
     >>> events = list(nodes_to_events(nodes, filters=[only_date_list]))
