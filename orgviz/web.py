@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import (Flask, request, json, render_template, send_from_directory,
-                   url_for, redirect)
+                   url_for, redirect, jsonify)
 from werkzeug.contrib.cache import SimpleCache
 
 import itertools
@@ -177,6 +177,13 @@ def events_data():
         eventclass=eventclass, filters=eventfilter, classifier=classifier,
         start=start, end=end)
     return listjsonify(events)
+
+
+@app.route('/cal_config')
+def cal_config():
+    return jsonify(dict(
+        eventSources=app.config['ORG_CAL_ADD_EVENTSOURCES'],
+    ))
 
 
 def gene_get_static_file_under(parent):

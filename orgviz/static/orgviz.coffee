@@ -101,7 +101,7 @@ getChoosePerspectiveByKey = (cpid, checkbox, choosePerspective) -> ->
   choosePerspective cpid
 
 
-setFullCalendarUI = (events_data, perspectives) ->
+setFullCalendarUI = (events_data, perspectives, config) ->
   calendar = $("#calendar")
   getEventclasses = -> (k for k, v of eventclasses when v.attr("checked"))
   getEventfilters = -> (k for k, v of eventfilters when v.attr("checked"))
@@ -139,19 +139,7 @@ setFullCalendarUI = (events_data, perspectives) ->
           eventclass: getEventclasses
           eventfilter: getEventfilters
       },
-      {
-        url: "https://www.google.com/calendar/feeds/japanese%40holiday.calendar.google.com/public/basic"
-        color: "#AB8B00"
-        textColor: "#AB8B00"
-        backgroundColor: "white"
-      },
-      {
-        url: "https://www.google.com/calendar/feeds/en.french%23holiday%40group.v.calendar.google.com/public/basic"
-        color: "#865A5A"
-        textColor: "#865A5A"
-        backgroundColor: "white"
-      },
-      ]
+      ].concat config.eventSources
     eventClick: (event) ->
       if event.url
         window.open event.url
@@ -269,8 +257,9 @@ setCalendarKeyBindAndAutoResizeAndAutoReloadAndHelp = ->
 #### Setup everything for calendar page
 #
 setCalendar = (events_data, perspectives) ->
-  setFullCalendarUI(events_data, perspectives)
-  setCalendarKeyBindAndAutoResizeAndAutoReloadAndHelp()
+  $.getJSON "/cal_config", (config) ->
+    setFullCalendarUI(events_data, perspectives, config)
+    setCalendarKeyBindAndAutoResizeAndAutoReloadAndHelp()
 
 
 #### Get a function to switch page to `page`
