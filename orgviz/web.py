@@ -216,11 +216,16 @@ def page_orgviz():
         for ((i, name), (_, dct)) in
         zip(cal_perspectives, app.config['ORG_CAL_PERSPECTIVES'])
         )
+    cal_eventclasses = \
+        zip(['deadline', 'scheduled', 'closed', 'clock']
+            + app.config['ORG_CAL_ADD_EVENTCLASSES'] + ['none'],
+            itertools.chain('zxcvbnm', itertools.repeat('')))
     return render_template(
         "orgviz.html",
         eventfilters=eventfilters,
         cal_perspectives=cal_perspectives,
         cal_perspectives_data=cal_perspectives_data,
+        cal_eventclasses=cal_eventclasses,
         )
 
 

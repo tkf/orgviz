@@ -147,24 +147,13 @@
   <div id='calendar-control-advanced'>
     <form>
       Event:
-      <input type="checkbox"
-             name="eventclass-deadline" value="eventclass-deadline"
-             id="eventclass-deadline" checked="yes" /> Deadline (z)
-      <input type="checkbox"
-             name="eventclass-scheduled" value="eventclass-scheduled"
-             id="eventclass-scheduled" checked="yes" /> Scheduled (x)
-      <input type="checkbox"
-             name="eventclass-stp" value="eventclass-stp"
-             id="eventclass-stp" checked="yes" /> STP (c)
-      <input type="checkbox"
-             name="eventclass-closed" value="eventclass-closed"
-             id="eventclass-closed"/> Closed (v)
-      <input type="checkbox"
-             name="eventclass-clock" value="eventclass-clock"
-             id="eventclass-clock"/> Clock (b)
-      <input type="checkbox"
-             name="eventclass-misc" value="eventclass-misc"
-             id="eventclass-misc"/> misc (n)
+      {% for (name, key) in cal_eventclasses -%}
+      <input type="checkbox" class="eventclass-checkbox"
+             name="eventclass-{{ name }}" value="eventclass-{{ name }}"
+             data-key="{{ key }}" data-name="{{ name }}"
+             id="eventclass-{{ name }}" />
+      {{ name }} {%- if key %} ({{ key }}) {%- endif %}
+      {% endfor -%}
     </form>
     <form>
       Filter:

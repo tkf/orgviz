@@ -26,6 +26,7 @@ Org-mode files to include calendar view.
 ORG_CAL_FILTERS = []
 ORG_CAL_PERSPECTIVES = []
 ORG_CAL_EVENT_CLASSIFIER = None
+ORG_CAL_ADD_EVENTCLASSES = []
 
 
 # ----------------------------------------------------------------------- #
