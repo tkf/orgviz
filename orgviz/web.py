@@ -198,6 +198,11 @@ tg_get_file = dict(
     )
 
 
+@app.route('/')
+def index():
+    return redirect(url_for('page_orgviz'))
+
+
 @app.route('/orgviz')
 def page_orgviz():
     eventfilters = [
@@ -256,11 +261,6 @@ def timeline_data():
     initial_zoom = app.config['ORG_TIMELINE_INITIAL_ZOOM']
     return listjsonify(gene_timeline(
         orgnodes_list, orgpath_list, initial_zoom))
-
-
-@app.route('/')
-def index():
-    return render_template("index.html", title='Top')
 
 
 @app.route('/cal')
