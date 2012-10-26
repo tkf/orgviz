@@ -177,6 +177,8 @@ setCalendarKeyBind = (doc, cal, cbConf, resizeCalendar, checkAutoReload) ->
     # navigation
     .bind("keydown", "left", -> cal.fullCalendar "prev")
     .bind("keydown", "right", -> cal.fullCalendar "next")
+    .bind("keydown", "h", -> cal.fullCalendar "prev")
+    .bind("keydown", "l", -> cal.fullCalendar "next")
     .bind("keydown", "j", getCalScrollUpDown(cal, 100))
     .bind("keydown", "k", getCalScrollUpDown(cal, -100))
     # change views
