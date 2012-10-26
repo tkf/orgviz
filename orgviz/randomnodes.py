@@ -19,16 +19,17 @@ class RandomDatetime(object):
 
 def node(level, heading, scheduled=None, deadline=None, closed=None,
          clock=None):
-    datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
+    active_datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
+    inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a]')
     yield '*' * level
     yield ' '
     yield heading
     yield '\n'
     if scheduled or deadline or closed:
         yield ' ' * level
-    for (name, date) in [('CLOSED', closed),
-                         ('DEADLINE', deadline),
-                         ('SCHEDULED', scheduled)]:
+    for (name, date, datestr) in [('CLOSED', closed, inactive_datestr),
+                                  ('DEADLINE', deadline, active_datestr),
+                                  ('SCHEDULED', scheduled, active_datestr)]:
         if date:
             yield ' '
             yield name
