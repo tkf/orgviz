@@ -45,8 +45,9 @@ class TestWebEventsData(unittest.TestCase):
     def get_events_data(self, start, end):
         start = totimestamp(datetime.datetime(*start))
         end = totimestamp(datetime.datetime(*end))
-        return self.app.get(
+        rv = self.app.get(
             '/events_data?start={0:.0f}&end={1:.0f}'.format(start, end))
+        return json.loads(rv.data)
 
     def test_start_end(self):
         self.write_org_file("""
@@ -58,8 +59,7 @@ class TestWebEventsData(unittest.TestCase):
           SCHEDULED: <2012-10-24 Fri>
         """)
         # FIXME: clarify boundary condition 2012-10-23 in Node 3 does not work!
-        rv = self.get_events_data(start=(2012, 10, 20), end=(2012, 10, 23))
-        events_data = json.loads(rv.data)
-        self.assertEqual(len(events_data), 2)
-        self.assertEqual(events_data[0]['title'], 'Node 1')
-        self.assertEqual(events_data[1]['title'], 'Node 2')
+        data = self.get_events_data(start=(2012, 10, 20), end=(2012, 10, 23))
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['title'], 'Node 1')
+        self.assertEqual(data[1]['title'], 'Node 2')
