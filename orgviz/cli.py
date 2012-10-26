@@ -2,6 +2,14 @@
 OrgViz command line interface.
 """
 
+import argparse
+import textwrap
+
+
+class Formatter(argparse.RawDescriptionHelpFormatter,
+                argparse.ArgumentDefaultsHelpFormatter):
+    pass
+
 
 def get_parser(commands):
     """
@@ -21,15 +29,13 @@ def get_parser(commands):
                        will be the description of the subcommand.
 
     """
-    import argparse
-    import textwrap
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers()
 
     for (name, adder, runner) in commands:
         subp = subparsers.add_parser(
             name,
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+            formatter_class=Formatter,
             description=runner.__doc__ and textwrap.dedent(runner.__doc__))
         adder(subp)
         subp.set_defaults(func=runner)
