@@ -24,7 +24,17 @@ Org-mode files to include calendar view.
 """
 
 ORG_CAL_FILTERS = []
-ORG_CAL_PERSPECTIVES = []
+# FIXME: error occurs in JS when ORG_CAL_PERSPECTIVES is []
+ORG_CAL_PERSPECTIVES = [
+    ('month', {
+        'event': ['deadline', 'scheduled'],
+        'view': 'month',
+        }),
+    ('month all', {
+        'event': ['deadline', 'scheduled', 'closed', 'clock', 'none'],
+        'view': 'month',
+        }),
+]
 ORG_CAL_EVENT_CLASSIFIER = None
 ORG_CAL_ADD_EVENTCLASSES = []
 ORG_CAL_ADD_EVENTSOURCES = []
