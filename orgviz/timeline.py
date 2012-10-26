@@ -10,7 +10,7 @@ def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
             return
         i = len(events)
         ev = {
-            'title': node.Heading(),
+            'title': node.heading,
             'id': 'orgviz-timeline-{0}'.format(i),
             'startdate': startdate.strftime(EVENT_DATE_FORMAT),
             # maybe importance should be >= initial_zoom?
@@ -26,12 +26,12 @@ def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
 
     for (orgnodes, orgpath) in zip(orgnodes_list, orgpath_list):
         for node in orgnodes:
-            add_event(node, node.Scheduled())
-            add_event(node, node.Deadline())
-            for date in node.DateList():
+            add_event(node, node.scheduled)
+            add_event(node, node.deadline)
+            for date in node.datelist:
                 add_event(node, date)
-            for (start, end) in node.RangeList():
-                add_event(node, start, end)
+            for od in node.rangelist:
+                add_event(node, od.start, od.end)
 
     mindate = min(alldate)
     maxdate = max(alldate)
