@@ -194,9 +194,9 @@
 <div id='container-dones'></div>
 <script type='text/javascript'>
   var favicon = {
-    "calendar": "{{ url_for('static', filename='favicons/calendar.ico') }}",
-    "graphs": "{{ url_for('static', filename='favicons/chart.ico') }}",
-    "dones": "{{ url_for('static', filename='favicons/cube_molecule_preferences.ico') }}"
+    "calendar": "{{ url_for('static', filename='favicons/nuvola/date.ico') }}",
+    "graphs": "{{ url_for('static', filename='favicons/nuvola/kmplot.ico') }}",
+    "dones": "{{ url_for('static', filename='favicons/nuvola/korganizer.ico') }}"
   }
   var cal_perspectives_data = {{ cal_perspectives_data|tojson|safe }};
   setOrgGtdWeb("{{ url_for('events_data') }}", cal_perspectives_data, favicon);
