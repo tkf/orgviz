@@ -1,0 +1,7 @@
+language: python
+before_install:
+  - pip install --quiet tox
+  - sudo apt-get install -qq coffeescript
+  - coffee --version
+script:
+  - make test

@@ -16,7 +16,7 @@ def summary_from_node(node):
         return heading
 
 
-def dt2ut(dt):
+def totimestamp(dt):
     """Convert datetime/date to unix time"""
     # see: http://www.seehuhn.de/pages/pdate#unix
     return time.mktime(dt.timetuple())
@@ -25,14 +25,14 @@ def dt2ut(dt):
 def gene_event(summary, dtstart, dtend=None):
     event = {
         'title': summary,
-        'start': dt2ut(dtstart),
+        'start': totimestamp(dtstart),
         }
     if isinstance(dtstart, datetime.datetime):
         event['allDay'] = False
     elif isinstance(dtstart, datetime.date):
         event['allDay'] = True
     if dtend is not None:
-        event['end'] = dt2ut(dtend)
+        event['end'] = totimestamp(dtend)
     return event
 
 

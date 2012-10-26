@@ -1,26 +1,12 @@
-ENV = env
-ORGVIZ_OPTS =
-
-.PHONY : run requirements env clean-env clean jslib clean-tmp
+.PHONY : test clean-tox clean jslib clean-tmp
 
 
-run: requirements
-	$(ENV)/bin/python -m orgviz.web $(ORGVIZ_OPTS)
+## Test
+test: jslib coffee
+	tox
 
-
-### Virtual Environment
-
-requirements: env
-	# Installing NumPy need to be done before installing matplotlib
-	pip install --environment $(ENV) numpy
-	pip install --environment $(ENV) --requirement requirements.txt
-
-env: $(ENV)/bin/activate
-$(ENV)/bin/activate:
-	virtualenv $(ENV)
-
-clean-env:
-	rm -rf $(ENV)
+clean-tox:
+	rm -rf .tox
 
 
 ### JS libraries
@@ -40,4 +26,4 @@ coffee:
 
 ### Clean
 
-clean: clean-env
+clean: clean-tox
