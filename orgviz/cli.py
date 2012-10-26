@@ -45,7 +45,8 @@ def get_parser(commands):
 
 def main(args=None):
     from orgviz import web
-    parser = get_parser([web.command])
+    from orgviz import sample
+    parser = get_parser([web.command, sample.command])
     ns = parser.parse_args(args=args)
     applyargs = lambda func, **kwds: func(**kwds)
     applyargs(**vars(ns))
