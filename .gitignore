@@ -8,6 +8,6 @@ orgviz/static/lib/
 orgviz/static/colorbox/
 orgviz/static/fullcalendar/
 orgviz/static/jquery/
-orgviz/static/favicons/
+orgviz/static/favicons/*/*.ico
 sample
 build

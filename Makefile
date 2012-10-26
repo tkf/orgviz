@@ -24,6 +24,21 @@ coffee:
 	coffee -c orgviz/static/
 
 
+## Favicons
+NUVOLA_DIR = orgviz/static/favicons/nuvola
+
+favicons: \
+	$(NUVOLA_DIR)/date.ico \
+	$(NUVOLA_DIR)/kmplot.ico \
+	$(NUVOLA_DIR)/korganizer.ico
+
+$(NUVOLA_DIR)/%.ico: $(NUVOLA_DIR)/%.png
+	convert $< $@
+
+clean-favicons:
+	rm $(NUVOLA_DIR)/*.ico
+
+
 ### Clean
 
 clean: clean-tox
