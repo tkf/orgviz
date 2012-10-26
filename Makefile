@@ -2,7 +2,7 @@
 
 
 ## Test
-test:
+test: jslib coffee
 	tox
 
 clean-tox:

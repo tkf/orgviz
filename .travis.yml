@@ -1,5 +1,7 @@
 language: python
 before_install:
-    pip install tox
+  - pip install tox
+  - sudo apt-get install coffeescript
+  - coffee --version
 script:
-    tox
+  - make test
