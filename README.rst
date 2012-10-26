@@ -1,6 +1,8 @@
 Browser based app to view org-mode files from different directions
 ==================================================================
 
+|build-status|
+
 .. warning:: Work in progress.
 
 In orgviz, you can...
@@ -12,3 +14,9 @@ In orgviz, you can...
   keyboard.
 
 * Write complex filter settings in Python.
+
+
+.. |build-status|
+   image:: https://secure.travis-ci.org/tkf/orgviz.png?branch=master
+   :target: http://travis-ci.org/tkf/orgviz
+   :alt: Build Status
