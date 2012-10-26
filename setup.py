@@ -42,6 +42,7 @@ setup(
     install_requires=[
         'argparse',
         'flask',
+        'orgparse',
         # Make them optional:
         'matplotlib',
         'numpy',
