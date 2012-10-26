@@ -94,3 +94,26 @@ class TestWebEventsData(unittest.TestCase):
         actual_colors = set([data[i]['color'] for i in range(3)])
         desired_colors = set(['green', 'red', 'blue'])  # FIXME: don't hardcode
         self.assertEqual(actual_colors, desired_colors)
+
+    def test_clock(self):
+        self.write_org_file("""
+        * Node 1
+          CLOCK: [2012-10-26 Fri 17:20]--[2012-10-26 Fri 17:30] =>  0:10
+          CLOCK: [2012-10-26 Fri 20:00]--[2012-10-26 Fri 20:10] =>  0:10
+        * Node 2
+          CLOCK: [2012-10-26 Fri 19:20]--[2012-10-26 Fri 19:30] =>  0:10
+          SCHEDULED: <2012-10-27 Sat>
+        * Node 3
+          CLOCK: [2012-10-26 Fri 20:20]--[2012-10-26 Fri 20:30] =>  0:10
+        """)
+        data = self.get_events_data(
+            start=(2012, 10, 1), end=(2012, 11, 1),
+            eventclass=['clock'])
+        self.assertEqual(
+            [(d['start'], d['end']) for d in data],
+            [(timestamp(2012, 10, 26, h1, m1),
+              timestamp(2012, 10, 26, h2, m2))
+             for (h1, m1, h2, m2) in [(17, 20, 17, 30),
+                                      (20,  0, 20, 10),
+                                      (19, 20, 19, 30),
+                                      (20, 20, 20, 30)]])
