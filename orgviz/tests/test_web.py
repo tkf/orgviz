@@ -7,13 +7,9 @@ import json
 import datetime
 
 from .. import web
+from ..cal import totimestamp
 
 TMP_PREFIX = 'orgviz-test-'
-
-
-def totimestamp(dt):
-    zero = datetime.datetime.fromtimestamp(0)
-    return (dt - zero).total_seconds()
 
 
 class TestWebEventsData(unittest.TestCase):
