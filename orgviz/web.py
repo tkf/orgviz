@@ -328,7 +328,7 @@ def run(conf=None, debug=False, cache_dir='/tmp/orgviz', no_cache=False,
     Start orgviz webserver.
     """
     if conf:
-        app.config.from_pyfile(conf)
+        app.config.from_pyfile(os.path.abspath(conf))
 
     def update_if_specified(key, val):
         if val:
