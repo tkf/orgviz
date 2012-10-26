@@ -302,12 +302,7 @@ def graphs_image(name):
     return send_from_directory(app.config['CACHE_DIR'], filename)
 
 
-def main():
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description='NEOrg - Numerical Experiment Organizer')
-
+def add_arguments(parser):
     parser.add_argument(
         '--conf', help='configuration file')
     parser.add_argument(
@@ -319,23 +314,6 @@ def main():
         '--profile-sort-by', nargs='+', default=('time', 'calls'),
         help='columns to sort the result by.')
     parser.add_argument(
-        '--org-common', nargs='+',
-        help='org files which is common to all pages')
-    parser.add_argument(
-        '--org-cal', nargs='+',
-        help='additional org files for calendar')
-    parser.add_argument(
-        '--org-dones', nargs='+',
-        help='additional org files for dones')
-    parser.add_argument(
-        '--org-graphs', nargs='+',
-        help='additional org files for graphs')
-    parser.add_argument(
-        '--org-timeline', nargs='+',
-        help='org files for timeline')
-    parser.add_argument(
-        '-t', '--tag', action='append')
-    parser.add_argument(
         '--cache-dir', default='/tmp/orgviz')
     parser.add_argument(
         '--no-cache', default=False, action='store_true')
@@ -343,24 +321,22 @@ def main():
         '-p', '--port', type=int, default=8000,
         help='port to listen (default: %(default)s)')
 
-    args = parser.parse_args()
 
-    if args.conf:
-        app.config.from_pyfile(args.conf)
+def run(conf=None, debug=False, cache_dir='/tmp/orgviz', no_cache=False,
+        profile=None, profile_sort_by=None, port=8000):
+    """
+    Start orgviz webserver.
+    """
+    if conf:
+        app.config.from_pyfile(conf)
 
     def update_if_specified(key, val):
         if val:
             app.config[key] = val
 
-    app.config['DEBUG'] = args.debug
-    update_if_specified('ORG_FILE_COMMON', args.org_common)
-    update_if_specified('ORG_FILE_CAL', args.org_cal)
-    update_if_specified('ORG_FILE_DONES', args.org_dones)
-    update_if_specified('ORG_FILE_GRAPHS', args.org_graphs)
-    update_if_specified('ORG_FILE_TIMELINE', args.org_timeline)
-    update_if_specified('ORG_TAGS', args.tag)
-    app.config['CACHE_DIR'] = cache_dir = args.cache_dir
-    app.config['ORG_USE_CACHE'] = not args.no_cache
+    app.config['DEBUG'] = debug
+    app.config['CACHE_DIR'] = cache_dir
+    app.config['ORG_USE_CACHE'] = not no_cache
 
     for key in app.config:
         if key.startswith('ORG_FILE_'):
@@ -370,16 +346,15 @@ def main():
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
 
-    if args.profile:
+    if profile:
         # hoock ProfilerMiddleware
         from werkzeug.contrib.profiler import ProfilerMiddleware
         app.wsgi_app = ProfilerMiddleware(
             app.wsgi_app,
-            file(args.profile, 'w'),
-            args.profile_sort_by)
+            file(profile, 'w'),
+            profile_sort_by)
 
-    app.run(port=args.port, extra_files=args.conf and [args.conf])
+    app.run(port=port, extra_files=conf and [conf])
 
 
-if __name__ == "__main__":
-    main()
+command = ('serve', add_arguments, run)
