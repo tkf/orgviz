@@ -22,6 +22,23 @@ In OrgViz, you can...
    :alt: Build Status
 
 
+Dependencies
+============
+
+- orgparse_
+- Flask_
+- argparse_ (Python <= 2.6)
+
+Optional dependencies:
+
+- matplotlib_
+
+.. _Flask: http://flask.pocoo.org/
+.. _orgparse: https://github.com/tkf/orgparse
+.. _argparse: http://code.google.com/p/argparse/
+.. _matplotlib: http://matplotlib.org/
+
+
 License
 =======
 
