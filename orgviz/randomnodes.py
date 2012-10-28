@@ -9,13 +9,14 @@ class RandomDatetime(object):
         self.post_days = post_days
         self.now = datetime.datetime.now()
 
-    def datetime(self):
-        delta = datetime.timedelta(
-            random.randrange(- self.pre_days, self.post_days + 1))
+    def datetime(self, pre=None, post=None):
+        pre = pre or self.pre_days
+        post = post or self.post_days
+        delta = datetime.timedelta(random.randrange(- pre, post + 1))
         return self.now + delta
 
-    def date(self):
-        return datetime.date(*self.datetime().timetuple()[:3])
+    def date(self, **kwds):
+        return datetime.date(*self.datetime(**kwds).timetuple()[:3])
 
 
 def node(level, heading, todo=None, scheduled=None, deadline=None,
@@ -58,7 +59,7 @@ def makeorg(num, **kwds):
             if random.choice(true_or_false):
                 kwds['todo'] = 'TODO'
             else:
-                kwds['closed'] = rd.date()
+                kwds['closed'] = rd.date(post=0)
                 kwds['todo'] = 'DONE'
         for sdc in ['scheduled', 'deadline']:
             if random.choice(true_or_false):
