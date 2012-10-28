@@ -10,7 +10,7 @@ fi
 
 tmpdir=tmp
 logf=$tmpdir/setup-jslib.log
-destdir=orgviz/static
+destdir=orgviz/static/lib
 
 fc_name=fullcalendar-1.5.2
 fc_zipname=$fc_name.zip
