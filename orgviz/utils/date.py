@@ -1,3 +1,6 @@
+from orgparse.date import total_seconds, total_minutes
+
+
 def minutestr(m):
     """
     Convert an integer to a 'HH:MM'-format string.
@@ -22,6 +25,4 @@ def timedeltastr(timedelta):
     '26:30'
 
     """
-    hour = timedelta.seconds // 60 // 60
-    min = timedelta.seconds // 60 - (hour * 60)
-    return '{0:02d}:{1:02d}'.format(timedelta.days * 24 + hour, min)
+    return minutestr(int(total_minutes(timedelta)))
