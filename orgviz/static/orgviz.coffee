@@ -243,7 +243,7 @@ setCalendarKeyBindAndAutoResizeAndAutoReloadAndHelp = ->
 
   cal = $("#calendar")
   resizeCalendar = getResizeCalendar(cal)
-  checkAutoReload = getCheckAutoReload()
+  checkAutoReload = getCheckAutoReload(cal)
 
   setCalendarKeyBind($(document), cal, cbConf, resizeCalendar, checkAutoReload)
 
