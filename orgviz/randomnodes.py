@@ -4,16 +4,21 @@ import datetime
 
 class RandomDatetime(object):
 
-    def __init__(self, pre_days=30, post_days=30):
+    def __init__(self, pre_days=30, post_days=30, hour_min=6, hour_max=21):
         self.pre_days = pre_days
         self.post_days = post_days
+        self.hour_min = hour_min
+        self.hour_max = hour_max
         self.now = datetime.datetime.now()
+        self.zero = datetime.datetime(*self.now.timetuple()[:3])
 
     def datetime(self, pre=None, post=None):
         pre = self.pre_days if pre is None else pre
         post = self.post_days if post is None else post
-        delta = datetime.timedelta(random.randrange(- pre, post + 1))
-        return self.now + delta
+        delta = datetime.timedelta(
+            random.randrange(- pre, post + 1),
+            random.randrange(self.hour_min, self.hour_max) * 60 * 60)
+        return self.zero + delta
 
     def date(self, **kwds):
         return datetime.date(*self.datetime(**kwds).timetuple()[:3])
@@ -28,8 +33,7 @@ def timedeltastr(timedelta):
 def node(level, heading, todo=None, scheduled=None, deadline=None,
          closed=None, clock=[], tags=[]):
     active_datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
-    inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a]')
-    inactive_datetimestr = lambda x: x.strftime('[%Y-%m-%d %a %H:%M]')
+    inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a %H:%M]')
     yield '*' * level
     yield ' '
     if todo:
@@ -54,9 +58,9 @@ def node(level, heading, todo=None, scheduled=None, deadline=None,
     for (clock_start, clock_end) in clock:
         yield ' ' * (level + 1)
         yield 'CLOCK: '
-        yield inactive_datetimestr(clock_start)
+        yield inactive_datestr(clock_start)
         yield '--'
-        yield inactive_datetimestr(clock_end)
+        yield inactive_datestr(clock_end)
         yield ' => '
         yield timedeltastr(clock_end - clock_start)
         yield '\n'
@@ -78,7 +82,7 @@ def makeorg(num, **kwds):
             if random.choice(true_or_false):
                 kwds['todo'] = 'TODO'
             else:
-                kwds['closed'] = rd.date(post=0)
+                kwds['closed'] = rd.datetime(post=0)
                 kwds['todo'] = 'DONE'
         for sdc in ['scheduled', 'deadline']:
             if random.choice(true_or_false):
@@ -86,13 +90,9 @@ def makeorg(num, **kwds):
         if random.choice(true_or_false):
             kwds['clock'] = clock = []
             for _ in range(random.randrange(1, 5)):
-                delta = datetime.timedelta(0, (6 - rd.now.hour) * 60 * 60)
-                rd.now = rd.now + delta
                 start = rd.datetime(post=0)
-                start = start + datetime.timedelta(
-                    0, random.randrange(0, 13) * 60 * 60)
                 end = start + datetime.timedelta(
-                    0, random.randrange(1, 5) * 60 * 60)
+                    0, random.randrange(30, 180) * 60)
                 clock.append((start, end))
         if random.choice(true_or_false):
             kwds['tags'] = [random.choice(tags_pops)]
