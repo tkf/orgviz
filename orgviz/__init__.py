@@ -133,6 +133,16 @@ OrgViz bundles libraries with the following licenses.
 .. _ColorBox: http://jacklmoore.com/colorbox
 .. _Nuvola: http://www.icon-king.com/projects/nuvola/
 
+
+Links
+-----
+
+* `Documentation (at Read the Docs) <http://orgviz.readthedocs.org/>`_
+* `Repository (at GitHub) <https://github.com/tkf/orgviz>`_
+* `Issue tracker (at GitHub) <https://github.com/tkf/orgviz/issues>`_
+* `PyPI <http://pypi.python.org/pypi/orgviz>`_
+* `Travis CI <https://travis-ci.org/#!/tkf/orgviz>`_
+
 """
 # [[[end]]]
 
