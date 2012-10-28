@@ -19,10 +19,17 @@ class RandomDatetime(object):
         return datetime.date(*self.datetime(**kwds).timetuple()[:3])
 
 
+def timedeltastr(timedelta):
+    hour = timedelta.seconds // 60 // 60
+    min = timedelta.seconds // 60 - (hour * 60)
+    return '{0:02d}:{1:02d}'.format(timedelta.days * 24 + hour, min)
+
+
 def node(level, heading, todo=None, scheduled=None, deadline=None,
-         closed=None, clock=None):
+         closed=None, clock=[]):
     active_datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
     inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a]')
+    inactive_datetimestr = lambda x: x.strftime('[%Y-%m-%d %a %H:%M]')
     yield '*' * level
     yield ' '
     if todo:
@@ -41,6 +48,15 @@ def node(level, heading, todo=None, scheduled=None, deadline=None,
             yield ': '
             yield datestr(date)
     if scheduled or deadline or closed:
+        yield '\n'
+    for (clock_start, clock_end) in clock:
+        yield ' ' * (level + 1)
+        yield 'CLOCK: '
+        yield inactive_datetimestr(clock_start)
+        yield '--'
+        yield inactive_datetimestr(clock_end)
+        yield ' => '
+        yield timedeltastr(clock_end - clock_start)
         yield '\n'
 
 
@@ -64,6 +80,13 @@ def makeorg(num, **kwds):
         for sdc in ['scheduled', 'deadline']:
             if random.choice(true_or_false):
                 kwds[sdc] = rd.date()
+        if random.choice(true_or_false):
+            kwds['clock'] = clock = []
+            for _ in range(random.randrange(1, 5)):
+                start = rd.datetime(post=0)
+                end = start + datetime.timedelta(
+                    0, random.randrange(1, 5) * 60 * 60)
+                clock.append((start, end))
         for s in node(**kwds):
             yield s
 
