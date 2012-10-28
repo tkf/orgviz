@@ -22,6 +22,40 @@ In OrgViz, you can...
    :alt: Build Status
 
 
+Install
+=======
+
+Installing OrgViz is as easy as::
+
+   pip install orgviz  # or
+   easy_install orgviz
+
+If you want to draw graphs, install matplotlib_.
+
+
+Usage
+=====
+
+Use the following command to start OrgViz server and the open
+http://127.0.0.1:8000 in your browser::
+
+   orgviz serve --port 8000 --conf YOUR/CONF/PATH.py
+
+If you want to reload server automatically when you rewrite the
+configuration file, currently you need to add ``--debug`` option::
+
+   orgviz serve --debug [OTHER OPTIONS]
+
+To quickly checkout what OrgViz can do, simply do::
+
+   orgviz sample
+
+This will make a configuration file and a randomly generated org file
+in ``./sample/`` directory and start OrgViz server with them.  You can
+edit the generated org file and see what happens to the pages in
+OrgViz.
+
+
 Dependencies
 ============
 
