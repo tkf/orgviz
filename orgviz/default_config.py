@@ -6,7 +6,7 @@ ORG_USE_CACHE = True
 Use in-memory cache for org-mode files to improve response speed.
 """
 
-ORG_FILE_COMMON = []
+ORG_COMMON_FILES = []
 """
 Common org-mode files.
 
@@ -18,7 +18,7 @@ These files will be included in any view.
 # ----------------------------------------------------------------------- #
 # Calendar
 
-ORG_FILE_CAL = []
+ORG_CAL_FILES = []
 """
 Org-mode files to include calendar view.
 """
@@ -43,7 +43,7 @@ ORG_CAL_ADD_EVENTSOURCES = []
 # ----------------------------------------------------------------------- #
 # Done list
 
-ORG_FILE_DONES = []
+ORG_DONES_FILES = []
 """
 Org-mode files to include in done list view.
 """
@@ -52,7 +52,7 @@ Org-mode files to include in done list view.
 # ----------------------------------------------------------------------- #
 # Graph
 
-ORG_FILE_GRAPHS = []
+ORG_GRAPHS_FILES = []
 """
 Org-mode files to include in graph view.
 """
@@ -61,7 +61,7 @@ Org-mode files to include in graph view.
 # ----------------------------------------------------------------------- #
 # Timeline
 
-ORG_FILE_TIMELINE = []
+ORG_TIMELINE_FILES = []
 """
 Org-mode files to include in timeline view.
 """

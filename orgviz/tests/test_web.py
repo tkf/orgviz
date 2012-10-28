@@ -22,7 +22,7 @@ class TestWebEventsData(unittest.TestCase):
     def setUpClass(cls):
         cls.tmpdir = tempfile.mkdtemp(prefix=TMP_PREFIX)
         cls.org_file = os.path.join(cls.tmpdir, 'test.org')
-        web.app.config['ORG_FILE_COMMON'] = [cls.org_file]
+        web.app.config['ORG_COMMON_FILES'] = [cls.org_file]
         cls.app = web.app.test_client()
 
     @classmethod

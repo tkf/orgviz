@@ -5,7 +5,7 @@ from . import web
 
 
 CONF_TEMPLATE = """\
-ORG_FILE_COMMON = [{orgpath!r}]
+ORG_COMMON_FILES = [{orgpath!r}]
 """
 
 

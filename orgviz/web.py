@@ -196,7 +196,7 @@ def events_data():
     else:
         eventfilter = []
     classifier = app.config['ORG_CAL_EVENT_CLASSIFIER']
-    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_CAL']
+    orgpath_list = app.config['ORG_COMMON_FILES'] + app.config['ORG_CAL_FILES']
     orgnodes = orgnodes_from_paths(orgpath_list)
     events = gene_events(
         orgnodes,
@@ -215,7 +215,7 @@ def cal_config():
 @app.route('/dones_data')
 def dones_data():
     from .dones import get_data
-    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_DONES']
+    orgpath_list = app.config['ORG_COMMON_FILES'] + app.config['ORG_DONES_FILES']
     orgnodes_list = map(get_orgnodes, orgpath_list)
     return render_template(
         "dones_data.html",
@@ -226,7 +226,7 @@ def dones_data():
 def graphs_image(name):
     filename = get_graph(
         name,
-        app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_GRAPHS'],
+        app.config['ORG_COMMON_FILES'] + app.config['ORG_GRAPHS_FILES'],
         'DONE')
     return send_from_directory(app.config['CACHE_DIR'], filename)
 
@@ -263,7 +263,7 @@ def page_timeline_file(filepath):
 @app.route('/timeline_data')
 def timeline_data():
     from .timeline import gene_timeline
-    orgpath_list = app.config['ORG_FILE_TIMELINE']
+    orgpath_list = app.config['ORG_TIMELINE_FILES']
     orgnodes_list = map(get_orgnodes, orgpath_list)
     initial_zoom = app.config['ORG_TIMELINE_INITIAL_ZOOM']
     return listjsonify(gene_timeline(
