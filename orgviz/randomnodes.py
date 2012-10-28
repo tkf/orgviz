@@ -10,8 +10,8 @@ class RandomDatetime(object):
         self.now = datetime.datetime.now()
 
     def datetime(self, pre=None, post=None):
-        pre = pre or self.pre_days
-        post = post or self.post_days
+        pre = self.pre_days if pre is None else pre
+        post = self.post_days if post is None else post
         delta = datetime.timedelta(random.randrange(- pre, post + 1))
         return self.now + delta
 
