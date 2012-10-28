@@ -1,8 +1,6 @@
 import time
 import datetime
 
-import orgparse.date
-
 from .event import nodes_to_events
 
 
