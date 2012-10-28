@@ -10,8 +10,8 @@ fi
 
 tmpdir=tmp
 logf=$tmpdir/setup-jslib.log
-destdir="orgviz/static/"
-libdir=$destdir/lib
+destdir=orgviz/static
+destlibdir=$destdir/lib
 
 fc_name=fullcalendar-1.5.2
 fc_zipname=$fc_name.zip
@@ -60,5 +60,5 @@ cp -r $tmpdir/$fc_name/jquery $destdir
 cp -r lib/$hk_name/jquery.hotkeys.js $destdir/jquery
 cp -r lib/$cb_name/colorbox $destdir
 cp -r lib/$cb_name/example1/* $destdir/colorbox
-mkdir -p $libdir/timeglider/
-cp -r $tmpdir/$tg_name-*/* $libdir/timeglider/
+mkdir -p $destlibdir/timeglider/
+cp -r $tmpdir/$tg_name-*/* $destlibdir/timeglider/
