@@ -48,7 +48,11 @@ unzip $fc_zippath -d $tmpdir >> $logf
 
 log-it "Copy JS libraries"
 cp -r $tmpdir/$fc_name/fullcalendar $destdir
+cp -r $tmpdir/$fc_name/*-LICENSE.txt $destdir/fullcalendar
 cp -r $tmpdir/$fc_name/jquery $destdir
 cp -r lib/$hk_name/jquery.hotkeys.js $destdir/jquery
 cp -r lib/$cb_name/colorbox $destdir
 cp -r lib/$cb_name/example1/* $destdir/colorbox
+
+# Note: Only FullCalendar has license document.  That's why I am not
+# copying it only for FullCalendar.
