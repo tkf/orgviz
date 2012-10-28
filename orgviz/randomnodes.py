@@ -17,12 +17,15 @@ class RandomDatetime(object):
         return datetime.date(*self.datetime().timetuple()[:3])
 
 
-def node(level, heading, scheduled=None, deadline=None, closed=None,
-         clock=None):
+def node(level, heading, todo=None, scheduled=None, deadline=None,
+         closed=None, clock=None):
     active_datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
     inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a]')
     yield '*' * level
     yield ' '
+    if todo:
+        yield todo
+        yield ' '
     yield heading
     yield '\n'
     if scheduled or deadline or closed:
@@ -50,7 +53,13 @@ def makeorg(num):
         else:
             kwds['level'] = random.randrange(1, 4)
         kwds['heading'] = random.choice(heading_pops)
-        for sdc in ['scheduled', 'deadline', 'closed']:
+        if random.choice(true_or_false):
+            if random.choice(true_or_false):
+                kwds['todo'] = 'TODO'
+            else:
+                kwds['closed'] = rd.date()
+                kwds['todo'] = 'DONE'
+        for sdc in ['scheduled', 'deadline']:
             if random.choice(true_or_false):
                 kwds[sdc] = rd.date()
         for s in node(**kwds):
