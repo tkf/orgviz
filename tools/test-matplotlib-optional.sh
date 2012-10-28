@@ -2,17 +2,14 @@
 
 set -e
 
-env=.envs/without-matplotlib
 log_file=tmp/test-matplotlib-optional.log
 pid_file=tmp/test-matplotlib-optional.pid
 
 echo "############### Test: OrgViz can run wihout matplotlib ################"
 
 [ ! -f "orgviz/__init__.py" ] && exit 1
-virtualenv --quiet $env
-source $env/bin/activate
-pip install --quiet .
 
+mkdir -p $(dirname $log_file)
 if python -c 'import matplotlib' 2> /dev/null
 then
     echo "This environment has matplotlib"
