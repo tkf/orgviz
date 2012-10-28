@@ -1,3 +1,12 @@
+"""
+OrgViz configuration
+====================
+
+OrgViz configuration file is just a Python file.  Only the variables
+in upper case will be loaded.
+
+"""
+
 # ----------------------------------------------------------------------- #
 # Global configuration
 
