@@ -56,6 +56,24 @@ edit the generated org file and see what happens to the pages in
 OrgViz.
 
 
+Development
+-----------
+
+To run from source, use the following commands.  You need
+coffee_, wget, unzip, make and git commands.  Also, all the
+dependencies (see below) must be importable.::
+
+   git clone git://github.com/tkf/orgviz.git
+   cd orgviz
+   make build
+   python -m orgviz.cli serve [OPTIONS]
+
+To run automated testing, run the following command.
+You need the tox_ command line tool::
+
+   make test
+
+
 Dependencies
 ------------
 
@@ -67,10 +85,17 @@ Optional dependencies:
 
 - matplotlib_
 
+Dependencies for build and test include:
+
+- coffee_
+- tox_
+
 .. _Flask: http://flask.pocoo.org/
 .. _orgparse: https://github.com/tkf/orgparse
 .. _argparse: http://code.google.com/p/argparse/
 .. _matplotlib: http://matplotlib.org/
+.. _coffee: http://coffeescript.org/
+.. _tox: http://tox.testrun.org/
 
 
 License
