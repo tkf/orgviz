@@ -117,3 +117,13 @@ class TestWebEventsData(unittest.TestCase):
                                       (20,  0, 20, 10),
                                       (19, 20, 19, 30),
                                       (20, 20, 20, 30)]])
+
+    def check_page(self, page):
+        rv = self.app.get(page)
+        assert 'body' in rv.data
+
+    def test_page_orgviz(self):
+        self.check_page('/orgviz')
+
+    def test_page_timeline(self):
+        self.check_page('/timeline/')
