@@ -76,7 +76,7 @@ def key_row_from_node(node):
         clocksum=clocksum and minute_to_str(clocksum),
         rootname=rootname,
         )
-    return (closed, row)
+    return (closed.start if closed else None, row)
 
 
 def unique_name_from_paths(pathlist):
