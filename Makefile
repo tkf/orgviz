@@ -4,6 +4,7 @@
 ## Test
 test: jslib coffee
 	tox
+	tools/test-matplotlib-optional.sh
 
 clean-tox:
 	rm -rf .tox

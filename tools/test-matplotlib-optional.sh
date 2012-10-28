@@ -6,6 +6,8 @@ env=.envs/without-matplotlib
 log_file=tmp/test-matplotlib-optional.log
 pid_file=tmp/test-matplotlib-optional.pid
 
+echo "############### Test: OrgViz can run wihout matplotlib ################"
+
 [ ! -f "orgviz/__init__.py" ] && exit 1
 virtualenv --quiet $env
 source $env/bin/activate
@@ -48,4 +50,4 @@ fi
 
 wget $url/orgviz -O /dev/null --output-file /dev/null
 kill $pid
-echo "Matplotlib is not needed to start server."
+echo "OK"
