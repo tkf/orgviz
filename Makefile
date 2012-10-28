@@ -1,4 +1,4 @@
-.PHONY : test clean-tox clean jslib update-jslib clean-tmp
+.PHONY : test clean-tox clean cog jslib update-jslib clean-tmp
 
 
 ## Test
@@ -8,9 +8,12 @@ test: jslib coffee
 clean-tox:
 	rm -rf .tox
 
+### cog
+cog: orgviz/__init__.py
+orgviz/__init__.py: README.rst
+	cd orgviz && cog.py -r __init__.py
 
 ### JS libraries
-
 jslib:
 	tools/setup-jslib.sh
 
@@ -21,7 +24,6 @@ clean-tmp:
 
 
 ### Coffee
-
 coffee:
 	coffee -c orgviz/static/
 
