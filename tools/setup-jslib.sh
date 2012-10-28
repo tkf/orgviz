@@ -34,19 +34,20 @@ log-it(){
     } >> $logf
 }
 
-mkdir -p $destdir
 mkdir -p $tmpdir
 rm -rf $logf
 
 log-it "Donload JS libraries"
 git submodule --quiet update --init >> $logf
 [ -e "$fc_zippath" ] || wget $fc_url -O $fc_zippath -a $logf
-rm -rf $tmpdir/$fc_name/
 
 log-it "Decompress JS libraries"
+rm -rf $tmpdir/$fc_name/
 unzip $fc_zippath -d $tmpdir >> $logf
 
 log-it "Copy JS libraries"
+rm -rf $destdir
+mkdir -p $destdir
 cp -r $tmpdir/$fc_name/fullcalendar $destdir
 cp -r $tmpdir/$fc_name/*-LICENSE.txt $destdir/fullcalendar
 cp -r $tmpdir/$fc_name/jquery $destdir

@@ -1,4 +1,4 @@
-.PHONY : test clean-tox clean jslib update-jslib clean-jslib clean-tmp
+.PHONY : test clean-tox clean jslib update-jslib clean-tmp
 
 
 ## Test
@@ -14,10 +14,7 @@ clean-tox:
 jslib:
 	tools/setup-jslib.sh
 
-update-jslib: clean-jslib clean-tmp jslib
-
-clean-jslib:
-	rm -rf orgviz/static/lib
+update-jslib: clean-tmp jslib
 
 clean-tmp:
 	rm -rf tmp
