@@ -12,7 +12,7 @@ clean-tox:
 ### JS libraries
 
 jslib:
-	./setup-jslib.sh
+	tools/setup-jslib.sh
 
 clean-tmp:
 	rm -rf tmp
