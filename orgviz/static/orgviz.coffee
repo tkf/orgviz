@@ -349,7 +349,7 @@ getReloadImages = (images) ->
 #### Setup pages for calendar, graphs, dones
 #
 # events_data and perspectives will be passed setCalendar.
-setOrgGtdWeb = (events_data, perspectives, favicon) ->
+setUpMain = (events_data, perspectives, favicon) ->
   setCalendar events_data, perspectives
   setPageViewKeyBind favicon
 
@@ -357,6 +357,6 @@ setOrgGtdWeb = (events_data, perspectives, favicon) ->
 # export functions as global function
 # see: http://stackoverflow.com/questions/4214731/
 root = exports ? this
-root.setOrgGtdWeb = setOrgGtdWeb
+root.setUpMain = setUpMain
 root.setCalendar = setCalendar
 root.getReloadImages = getReloadImages
