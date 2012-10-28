@@ -9,11 +9,6 @@ import os
 import hashlib
 import orgparse
 
-from orgviz.graphs import (gene_clocked_par_day, gene_done_par_day,
-                              gene_overview)
-from orgviz.cal import gene_events
-from orgviz.timeline import gene_timeline
-
 
 app = Flask('orgviz')
 app.config.from_object('orgviz.default_config')
@@ -102,6 +97,7 @@ def get_graph(name, orgpaths, *args, **kwds):
     be used.
 
     """
+    from .graphs import graph_func_map
     figname = u'{0}({1})'.format(
         name, args_to_str(*((orgpaths,) + args), **kwds))
     filename = '{0}.png'.format(
@@ -118,23 +114,6 @@ def get_graph(name, orgpaths, *args, **kwds):
         app.logger.debug(
             "use cached graph figname='{0}'".format(figname))
     return filename
-
-
-graph_func_map = {
-    'done_par_day': gene_done_par_day,
-    'clocked_par_day': gene_clocked_par_day,
-    'overview': gene_overview,
-    }
-"""
-A map between graph name to graph generator
-
-A graph generator takes the following two parameters:
-
-orgnodes
-    a list of Orgnodes such as the list returned by orgparse.makelist.
-done
-    TODO tag for done. Usually, it is just 'DONE'.
-"""
 
 
 def orgnodes_from_paths(path_list):
@@ -201,6 +180,7 @@ def page_orgviz():
 
 @app.route('/events_data')
 def events_data():
+    from .cal import gene_events
     start = request.args.get('start')
     end = request.args.get('end')
     start = int(start) if start.isdigit() else None
@@ -234,7 +214,7 @@ def cal_config():
 
 @app.route('/dones_data')
 def dones_data():
-    from orgviz.dones import get_data
+    from .dones import get_data
     orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_DONES']
     orgnodes_list = map(get_orgnodes, orgpath_list)
     return render_template(
@@ -282,6 +262,7 @@ def page_timeline_file(filepath):
 
 @app.route('/timeline_data')
 def timeline_data():
+    from .timeline import gene_timeline
     orgpath_list = app.config['ORG_FILE_TIMELINE']
     orgnodes_list = map(get_orgnodes, orgpath_list)
     initial_zoom = app.config['ORG_TIMELINE_INITIAL_ZOOM']
