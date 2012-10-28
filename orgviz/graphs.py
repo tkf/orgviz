@@ -9,10 +9,9 @@ import numpy
 from matplotlib.dates import date2num
 import datetime
 
-from orgparse.date import total_minutes, total_seconds
+from orgparse.date import total_seconds
 
 from .event import nodes_to_events
-from .dones import find_rootname
 
 ## timezone = matplotlib.dates.pytz.timezone('Europe/Paris')
 ## xa_formatter = matplotlib.dates.DateFormatter("%b %d %H:%M", timezone)
@@ -29,66 +28,6 @@ weekFormatter = DateFormatter('%b %d')  # Eg, Jan 12
 dayFormatter = DateFormatter('%d')      # Eg, 12
 # See:
 # http://matplotlib.sourceforge.net/examples/pylab_examples/finance_demo.html
-
-DTYPE_TABLE = [
-    ('closed', float), ('scheduled', float),
-    ('clock', int), ('estimate', int),
-    ('rootid', int),
-    ]
-
-
-def gene_get_row():
-    """
-    Generate get_row and id2rootname.
-
-    get_row
-        Get row from org node. Each row shold have data which is specified
-        by DTYPE_TABLE.
-
-    id2rootname
-        Dictionary for id-rootname correspondence which will be stored
-        if you run ``get_row(node)`` for node with unknown 'rootname'.
-    """
-    id2rootname = {0: ''}
-    rootname2id = {'': 0}
-
-    def get_row(node):
-        closed = node.closed
-        scheduled = node.scheduled
-        closed = (closed and date2num(closed.start)) or 0
-        scheduled = (scheduled and date2num(scheduled.start)) or 0
-        clock = node.clock
-        clock = (clock and
-                 # Check: is using minute correct?
-                 sum([total_minutes(c.duration) for c in clock])) or 0
-        estimate = node.get_property('Estimate') or 0
-        # find rootid
-        rootid = 0
-        rootname = find_rootname(node)
-        if rootname:
-            if rootname in rootname2id:
-                rootid = rootname2id[rootname]
-            else:
-                rootid = max(id2rootname) + 1
-                id2rootname[rootid] = rootname
-                rootname2id[rootname] = rootid
-        return (closed, scheduled, clock, estimate, rootid)
-    return (get_row, id2rootname)
-
-
-def get_table(orgnodes, done):
-    """
-    Get table from org files
-    """
-    (get_row, id2rootname) = gene_get_row()
-    row_list = [
-        get_row(node)
-        for node in orgnodes
-        if node.todo == done
-        ]
-    table = numpy.array(row_list, dtype=DTYPE_TABLE)
-    table.sort(order='closed')
-    return (table, id2rootname)
 
 
 def set_xaxis_format_date(ax):
