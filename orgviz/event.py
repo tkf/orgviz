@@ -168,8 +168,8 @@ def nodes_to_events(nodes, filters=[], eventclass='all', classifier=None,
 
     :type  filters: list of callable
     :arg   filters:
-        Each function is called with event object.  Event is included
-        only when all the functions return True.
+        Each function is called with an event object.  Event is
+        included only when all the functions return True.
         `ORG_CAL_FILTERS` is used for this argument.
 
     :type  eventclass: str or list of str
