@@ -6,6 +6,15 @@ log_file=tmp/test-matplotlib-optional.log
 out_file=tmp/test-matplotlib-optional.out
 pid_file=tmp/test-matplotlib-optional.pid
 
+kill-orgviz(){
+    if [ -n "$pid" ]
+    then
+        echo "Killing server (pid=$pid)." >> $log_file
+        kill $pid
+    fi
+}
+trap kill-orgviz EXIT
+
 echo "############### Test: OrgViz can run wihout matplotlib ################"
 
 mkdir -p $(dirname $log_file)
@@ -64,7 +73,4 @@ echo "Requesting $url/orgviz." >> $log_file
 printf .
 wget $url/orgviz -O /dev/null --output-file /dev/null
 
-echo "Killing server (pid=$pid)." >> $log_file
-printf .
-kill $pid
 echo "OK"
