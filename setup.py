@@ -1,5 +1,8 @@
 import os
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 import orgviz
 
@@ -39,6 +42,11 @@ setup(
         'Programming Language :: Python :: 2.7',
         # see: http://pypi.python.org/pypi?%3Aaction=list_classifiers
     ],
+    entry_points={
+        'console_scripts': [
+            'orgviz = orgviz.cli:main',
+        ],
+    },
     install_requires=[
         'argparse',
         'flask',
