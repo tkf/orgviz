@@ -19,7 +19,7 @@ def allfiles(directory):
 setup(
     name='orgviz',
     version=orgviz.__version__,
-    packages=['orgviz', 'orgviz.tests'],
+    packages=['orgviz', 'orgviz.tests', 'orgviz.utils'],
     package_data={
         'orgviz': (
             [os.path.join('templates', '*.html')]

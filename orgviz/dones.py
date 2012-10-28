@@ -7,15 +7,7 @@ import itertools
 
 from orgparse.date import total_minutes
 
-
-def minute_to_str(m):
-    """
-    >>> minute_to_str(70)
-    '01:10'
-    >>> minute_to_str(200)
-    '03:20'
-    """
-    return '%02d:%02d' % (m // 60, m % 60)
+from .utils.date import minutestr
 
 
 def rootname_from_archive_olpath(node):
@@ -73,8 +65,8 @@ def key_row_from_node(node):
         heading=heading,
         closed=closed and closed.start.strftime('%a %d %b %H:%M'),
         scheduled=scheduled and scheduled.start.strftime('%a %d %b %H:%M'),
-        effort=effort and minute_to_str(effort),
-        clocksum=clocksum and minute_to_str(clocksum),
+        effort=effort and minutestr(effort),
+        clocksum=clocksum and minutestr(clocksum),
         rootname=rootname,
         )
     return (closed.start if closed else None, row)

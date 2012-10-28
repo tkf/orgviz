@@ -1,6 +1,8 @@
 import random
 import datetime
 
+from .utils.date import timedeltastr
+
 
 class RandomDatetime(object):
 
@@ -22,12 +24,6 @@ class RandomDatetime(object):
 
     def date(self, **kwds):
         return datetime.date(*self.datetime(**kwds).timetuple()[:3])
-
-
-def timedeltastr(timedelta):
-    hour = timedelta.seconds // 60 // 60
-    min = timedelta.seconds // 60 - (hour * 60)
-    return '{0:02d}:{1:02d}'.format(timedelta.days * 24 + hour, min)
 
 
 def node(level, heading, todo=None, scheduled=None, deadline=None,
