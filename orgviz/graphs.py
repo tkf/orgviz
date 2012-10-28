@@ -44,7 +44,7 @@ def within_ndays_before(n):
     maxsec = n * 24 * 60 * 60
 
     def predicate(ev):
-        return total_seconds(now - ev.date.start) <= maxsec
+        return 0 <= total_seconds(now - ev.date.start) <= maxsec
     return predicate
 
 
