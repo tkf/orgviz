@@ -170,6 +170,8 @@ setCalendarKeyBind = (doc, cal, cbConf, resizeCalendar, checkAutoReload) ->
     # show key bindings
     .bind("keydown", "shift+h", ->
       $.colorbox $.extend(href: "#help", cbConf))
+    .bind("keydown", "shift+/", ->  # FIXME: directly bind "?" (possible?)
+      $.colorbox $.extend(href: "#help", cbConf))
     # toggle advanced control panel
     .bind("keydown", "shift+p", ->
       $("#calendar-control-advanced").toggle()
