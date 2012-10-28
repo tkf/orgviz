@@ -1,0 +1,6 @@
+[submodule "lib/jquery.hotkeys"]
+	path = lib/jquery.hotkeys
+	url = git://github.com/tzuryby/jquery.hotkeys.git
+[submodule "lib/colorbox"]
+	path = lib/colorbox
+	url = git://github.com/jackmoore/colorbox.git
