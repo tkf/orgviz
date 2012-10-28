@@ -44,7 +44,10 @@ def within_ndays_before(n):
     maxsec = n * 24 * 60 * 60
 
     def predicate(ev):
-        return 0 <= total_seconds(now - ev.date.start) <= maxsec
+        date = ev.date.start
+        if isinstance(date, datetime.date):
+            date = datetime.datetime(*date.timetuple()[:3])
+        return 0 <= total_seconds(now - date) <= maxsec
     return predicate
 
 
@@ -113,6 +116,49 @@ def gene_done_par_day(orgnodes, done, days=30):
     return fig
 
 
+def plot_tags_dist(ax, orgnodes, days=180, num=10):
+    event_tags = (e.tags for e in nodes_to_events(
+        orgnodes,
+        filters=[within_ndays_before(days)],
+        eventclass=['closed']))
+
+    counter = {}
+    for tags in event_tags:
+        for t in tags:
+            if t in counter:
+                counter[t] += 1
+            else:
+                counter[t] = 1
+
+    if not counter:
+        return
+    taglen = max(map(len, counter))
+    data = numpy.array(
+        list(counter.items()),
+        dtype=[('tags', 'S{0}'.format(taglen)), ('count', int)])
+    data.sort(order=['count'])
+    data = data[::-1][:num]
+    x = numpy.arange(len(data))
+    ax.bar(x, data['count'], width=1, color='b', alpha=0.3)
+    ax.set_xticks(x + 0.5)
+    ax.set_xticklabels(data['tags'])
+    pylab.setp(ax.get_xticklabels(),
+               rotation=90,
+               y=0.05,
+               horizontalalignment="left",
+               verticalalignment='bottom')
+
+
+def gene_tags_dist(orgnodes, done='THIS IS DUMMY ARG', **kwds):
+    """
+    Draw graph from org file: done (closed) task par day
+    """
+    fig = pylab.figure(figsize=(5, 4))
+    ax = fig.add_subplot(111)
+    plot_tags_dist(ax, orgnodes, **kwds)
+    return fig
+
+
 def gene_overview(orgnodes, done, days=30):
     """
     Draw graph from org file: overview
@@ -142,6 +188,7 @@ def gene_overview(orgnodes, done, days=30):
 graph_func_map = {
     'done_par_day': gene_done_par_day,
     'clocked_par_day': gene_clocked_par_day,
+    'tags_dist': gene_tags_dist,
     'overview': gene_overview,
     }
 """
