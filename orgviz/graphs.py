@@ -159,6 +159,46 @@ def gene_tags_dist(orgnodes, done='THIS IS DUMMY ARG', **kwds):
     return fig
 
 
+def decompose_in_day_and_hour(dates):
+    decomposed = numpy.zeros(len(dates), dtype=[('day', int), ('hour', float)])
+    decomposed['day'] = dates
+    decomposed['hour'] = (dates - decomposed['day']) * 24
+    return decomposed
+
+
+def plot_clocked_and_closed(ax, orgnodes, days=30):
+    events = list(nodes_to_events(
+        orgnodes,
+        filters=[within_ndays_before(days)],
+        eventclass=['closed', 'clock']))
+    closed = numpy.array(
+        [date2num(e.date.start)
+         for e in events if e.eventclass == 'closed'])
+    clock = numpy.array(
+        [(date2num(e.date.start), date2num(e.date.end))
+         for e in events if e.eventclass == 'clock'],
+        dtype=[('start', float), ('end', float)])
+    dh_closed = decompose_in_day_and_hour(closed)
+    dh_clock_start = decompose_in_day_and_hour(clock['start'])
+    dh_clock_end = decompose_in_day_and_hour(clock['end'])
+    ax.plot(dh_closed['day'] + 0.5, dh_closed['hour'], 'x')
+    ax.errorbar(
+        dh_clock_start['day'] + 0.5,
+        (dh_clock_start['hour'] + dh_clock_start['hour']) / 2.0,
+        yerr=(dh_clock_end['hour'] - dh_clock_start['hour']),
+        fmt=None)
+    set_xaxis_format_date(ax)
+    ax.set_ylim(-0.1, 24.1)
+
+
+def gene_clocked_and_closed(orgnodes, done='THIS IS DUMMY ARG', **kwds):
+    fig = pylab.figure(figsize=(5, 4))
+    fig.subplots_adjust(bottom=0.2)
+    ax = fig.add_subplot(111)
+    plot_clocked_and_closed(ax, orgnodes, **kwds)
+    return fig
+
+
 def gene_overview(orgnodes, done, days=30):
     """
     Draw graph from org file: overview
@@ -189,6 +229,7 @@ graph_func_map = {
     'done_par_day': gene_done_par_day,
     'clocked_par_day': gene_clocked_par_day,
     'tags_dist': gene_tags_dist,
+    'clocked_and_closed': gene_clocked_and_closed,
     'overview': gene_overview,
     }
 """
