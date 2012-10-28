@@ -26,7 +26,7 @@ def timedeltastr(timedelta):
 
 
 def node(level, heading, todo=None, scheduled=None, deadline=None,
-         closed=None, clock=[]):
+         closed=None, clock=[], tags=[]):
     active_datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
     inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a]')
     inactive_datetimestr = lambda x: x.strftime('[%Y-%m-%d %a %H:%M]')
@@ -36,6 +36,8 @@ def node(level, heading, todo=None, scheduled=None, deadline=None,
         yield todo
         yield ' '
     yield heading
+    if tags:
+        yield '  :{0}:'.format(':'.join(tags))
     yield '\n'
     if scheduled or deadline or closed:
         yield ' ' * level
@@ -62,6 +64,7 @@ def node(level, heading, todo=None, scheduled=None, deadline=None,
 
 def makeorg(num, **kwds):
     heading_pops = ['aaa', 'bbb', 'ccc']
+    tags_pops = ['work', 'boss', 'notes', 'action', '@home', '@work']
     true_or_false = [True, False]
     rd = RandomDatetime(**kwds)
     for i in range(num):
@@ -87,6 +90,8 @@ def makeorg(num, **kwds):
                 end = start + datetime.timedelta(
                     0, random.randrange(1, 5) * 60 * 60)
                 clock.append((start, end))
+        if random.choice(true_or_false):
+            kwds['tags'] = [random.choice(tags_pops)]
         for s in node(**kwds):
             yield s
 
