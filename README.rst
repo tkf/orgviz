@@ -1,14 +1,14 @@
-Browser based app to view org-mode files from different directions
-==================================================================
+OrgViz - Browser based app to view org-mode files from different directions
+===========================================================================
 
 |build-status|
 
 .. warning:: Work in progress.
 
-In orgviz, you can...
+In OrgViz, you can...
 
 * View org-mode files in different formats:
-  calendar / table / histogram / time line
+  calendar / table / histogram
 
 * Use rich formatting of web browsers but everything is reachable from
   keyboard.
