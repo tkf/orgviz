@@ -185,3 +185,20 @@ def gene_overview(orgnodes, done, days=30):
     #
     ax1.set_title('Overview')
     return fig
+
+
+graph_func_map = {
+    'done_par_day': gene_done_par_day,
+    'clocked_par_day': gene_clocked_par_day,
+    'overview': gene_overview,
+    }
+"""
+A map between graph name to graph generator
+
+A graph generator takes the following two parameters:
+
+orgnodes
+    a list of Orgnodes such as the list returned by orgparse.makelist.
+done
+    TODO tag for done. Usually, it is just 'DONE'.
+"""
