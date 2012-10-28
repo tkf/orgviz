@@ -41,9 +41,10 @@ def set_xaxis_format_date(ax):
 
 def within_ndays_before(n):
     now = datetime.datetime.now()
+    maxsec = n * 24 * 60 * 60
 
     def predicate(ev):
-        return total_seconds(now - ev.date.start) > 0
+        return total_seconds(now - ev.date.start) <= maxsec
     return predicate
 
 
