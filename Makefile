@@ -8,13 +8,16 @@ test: build
 clean-tox:
 	rm -rf .tox
 
+
 ## Bulid
-build: jslib coffee
+build: jslib coffee favicons
+
 
 ### cog
 cog: orgviz/__init__.py
 orgviz/__init__.py: README.rst
 	cd orgviz && cog.py -r __init__.py
+
 
 ### JS libraries
 jslib:
@@ -47,5 +50,4 @@ clean-favicons:
 
 
 ### Clean
-
 clean: clean-tox
