@@ -3,6 +3,7 @@
 
 import os
 import datetime
+import itertools
 
 from orgparse.date import total_minutes
 
@@ -116,7 +117,7 @@ def table_add_oddday(key_table):
         previous = this
 
 
-def get_data(orgnodes_list, orgpath_list, done):
+def get_data(orgnodes_list, orgpath_list, done, num=100):
     """
     Get data for rendering jinja2 template. Data is dictionary like this:
 
@@ -144,6 +145,6 @@ def get_data(orgnodes_list, orgpath_list, done):
         for (orgpath, orgname) in zip(orgpath_list, orgname_list)]
     key_table.sort(reverse=True)
     table_add_oddday(key_table)
-    table = [row for (key, row) in key_table]
+    table = list(itertools.islice((row for (key, row) in key_table), num))
     return dict(table=table, orgpathname_list=orgpathname_list,
                 title='Recently archived tasks')
