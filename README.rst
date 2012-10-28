@@ -56,6 +56,20 @@ edit the generated org file and see what happens to the pages in
 OrgViz.
 
 
+Configuration
+^^^^^^^^^^^^^
+
+Here is a minimal configuration.::
+
+    ORG_COMMON_FILES = [
+        'PATH/TO/ORG/FILE-1.org',
+        'PATH/TO/ORG/FILE-2.org',
+        # and more...
+    ]
+
+For more options available, see ``orgviz/default_config.py``.
+
+
 Development
 -----------
 
