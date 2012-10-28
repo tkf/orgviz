@@ -7,11 +7,12 @@ matplotlib.use('Agg')
 import pylab
 import numpy
 from matplotlib.dates import date2num
-from datetime import datetime
+import datetime
 
-from orgparse.date import total_minutes
+from orgparse.date import total_minutes, total_seconds
 
-from orgviz.dones import find_rootname
+from .event import nodes_to_events
+from .dones import find_rootname
 
 ## timezone = matplotlib.dates.pytz.timezone('Europe/Paris')
 ## xa_formatter = matplotlib.dates.DateFormatter("%b %d %H:%M", timezone)
@@ -99,24 +100,33 @@ def set_xaxis_format_date(ax):
     pylab.setp(ax.get_xticklabels(), rotation=40, ha="right")
 
 
+def within_ndays_before(n):
+    now = datetime.datetime.now()
+
+    def predicate(ev):
+        return total_seconds(now - ev.date.start) > 0
+    return predicate
+
+
 def plot_clocked_per_day(ax, orgnodes, done, days,
                          ylabel='Clocked Time Per Day [h]'):
-    (table, id2rootname) = get_table(orgnodes, done)
-    closed = table['closed']
-    if len(closed) == 0:
+    events = nodes_to_events(
+        orgnodes, filters=[within_ndays_before(days)], eventclass=['clock'])
+    clocked = numpy.array(
+        [(date2num(e.date.start), total_seconds(e.date.duration) / 60 / 60)
+         for e in events],
+        dtype=[('start', int), ('duration', int)])
+    if len(clocked) == 0:
         return
-    lastday = int(numpy.floor(closed[-1]))
-    firstday = lastday - days + 1
-    i0 = ((closed - firstday) ** 2).argmin()
+    lastday = clocked['start'].max()
+    firstday = clocked['start'].min()
 
-    dates = numpy.arange(days)
-    cpd = numpy.zeros(days, dtype='float')  # clocked per day
-    closed0_int = numpy.floor(closed[i0:]).astype(int)
-    table0 = table[i0:]
+    dates = numpy.arange(lastday - firstday + 1)
+    cpd = numpy.zeros(len(dates), dtype='float')  # clocked per day
     for i in dates:
-        cpd[i] = numpy.extract(closed0_int == firstday + i,
-                               table0['clock']).sum()
-    ax.bar(dates + firstday, cpd / 60.0, width=1, color='b', alpha=0.3)
+        cpd[i] = numpy.extract(clocked['start'] == firstday + i,
+                               clocked['duration']).sum()
+    ax.bar(dates + firstday, cpd, width=1, color='b', alpha=0.3)
     ax.set_ylabel(ylabel)
 
 
@@ -143,7 +153,7 @@ def time_array_closed(orgnodes, done, start):
 
 def plot_done_par_day(ax, orgnodes, done, days,
                       ylabel='Tasks done per day [1/day]'):
-    today = int(date2num(datetime.now())) + 1  # end of today
+    today = int(date2num(datetime.datetime.now())) + 1  # end of today
     start = today - days
     time_array = time_array_closed(orgnodes, done, start)
     ax.hist(time_array, bins=days, range=(start, today),
