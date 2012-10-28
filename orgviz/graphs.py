@@ -103,6 +103,8 @@ def plot_clocked_per_day(ax, orgnodes, done, days,
                          ylabel='Clocked Time Per Day [h]'):
     (table, id2rootname) = get_table(orgnodes, done)
     closed = table['closed']
+    if len(closed) == 0:
+        return
     lastday = int(numpy.floor(closed[-1]))
     firstday = lastday - days + 1
     i0 = ((closed - firstday) ** 2).argmin()
