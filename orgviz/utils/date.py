@@ -7,13 +7,13 @@ def minutestr(m):
 
     >>> minutestr(70)
     '01:10'
-    >>> minutestr(200)
+    >>> minutestr(200.0)
     '03:20'
     >>> minutestr(180 * 60 + 30)
     '180:30'
 
     """
-    return '{0:02d}:{1:02d}'.format(m // 60, m % 60)
+    return '{0:02.0f}:{1:02.0f}'.format(m // 60, m % 60)
 
 
 def timedeltastr(timedelta):
@@ -25,4 +25,4 @@ def timedeltastr(timedelta):
     '26:30'
 
     """
-    return minutestr(int(total_minutes(timedelta)))
+    return minutestr(total_minutes(timedelta))
