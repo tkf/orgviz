@@ -5,9 +5,7 @@ import os
 import datetime
 import itertools
 
-from orgparse.date import total_minutes
-
-from .utils.date import minutestr
+from .utils.date import minutestr, total_minutes
 
 
 def rootname_from_archive_olpath(node):

@@ -9,9 +9,8 @@ import numpy
 from matplotlib.dates import date2num
 import datetime
 
-from orgparse.date import total_seconds
-
 from .event import nodes_to_events
+from .utils.date import total_seconds
 
 ## timezone = matplotlib.dates.pytz.timezone('Europe/Paris')
 ## xa_formatter = matplotlib.dates.DateFormatter("%b %d %H:%M", timezone)
