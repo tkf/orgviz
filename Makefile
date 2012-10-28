@@ -1,12 +1,15 @@
-.PHONY : test clean-tox clean cog jslib update-jslib clean-tmp
+.PHONY : test build clean-tox clean cog jslib update-jslib clean-tmp
 
 
 ## Test
-test: jslib coffee
+test: build
 	tox
 
 clean-tox:
 	rm -rf .tox
+
+## Bulid
+build: jslib coffee
 
 ### cog
 cog: orgviz/__init__.py
