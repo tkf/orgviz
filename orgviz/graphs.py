@@ -151,7 +151,7 @@ def plot_tags_dist(ax, orgnodes, days=180, num=10):
 
 def gene_tags_dist(orgnodes, done='THIS IS DUMMY ARG', **kwds):
     """
-    Draw graph from org file: done (closed) task par day
+    Plot top N tags of closed tasks and the number of the tasks.
     """
     fig = pylab.figure(figsize=(5, 4))
     ax = fig.add_subplot(111)
@@ -192,6 +192,9 @@ def plot_clocked_and_closed(ax, orgnodes, days=30):
 
 
 def gene_clocked_and_closed(orgnodes, done='THIS IS DUMMY ARG', **kwds):
+    """
+    Plot punchcard-like clocked/closed activity.
+    """
     fig = pylab.figure(figsize=(5, 4))
     fig.subplots_adjust(bottom=0.2)
     ax = fig.add_subplot(111)
