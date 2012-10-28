@@ -1,4 +1,4 @@
-.PHONY : test build clean-tox clean cog jslib update-jslib clean-tmp
+.PHONY : test build upload clean-tox clean cog jslib update-jslib clean-tmp
 
 
 ## Test
@@ -47,6 +47,11 @@ $(NUVOLA_DIR)/%.ico: $(NUVOLA_DIR)/%.png
 
 clean-favicons:
 	rm $(NUVOLA_DIR)/*.ico
+
+
+## Upload to PyPI
+upload: build
+	python setup.py register sdist upload
 
 
 ### Clean
