@@ -188,7 +188,8 @@ def plot_clocked_and_closed(ax, orgnodes, days=30):
         yerr=(dh_clock_end['hour'] - dh_clock_start['hour']),
         fmt=None)
     set_xaxis_format_date(ax)
-    ax.set_ylim(-0.1, 24.1)
+    ax.set_yticks([0, 6, 12, 18, 24])
+    ax.set_ylim(24.1, -0.1)
 
 
 def gene_clocked_and_closed(orgnodes, done='THIS IS DUMMY ARG', **kwds):
