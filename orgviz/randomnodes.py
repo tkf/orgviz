@@ -86,7 +86,11 @@ def makeorg(num, **kwds):
         if random.choice(true_or_false):
             kwds['clock'] = clock = []
             for _ in range(random.randrange(1, 5)):
+                delta = datetime.timedelta(0, (6 - rd.now.hour) * 60 * 60)
+                rd.now = rd.now + delta
                 start = rd.datetime(post=0)
+                start = start + datetime.timedelta(
+                    0, random.randrange(0, 13) * 60 * 60)
                 end = start + datetime.timedelta(
                     0, random.randrange(1, 5) * 60 * 60)
                 clock.append((start, end))
