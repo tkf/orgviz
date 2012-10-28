@@ -310,7 +310,7 @@ def run(conf=None, debug=False, cache_dir='/tmp/orgviz', no_cache=False,
     app.config['ORG_USE_CACHE'] = not no_cache
 
     for key in app.config:
-        if key.startswith('ORG_FILE_'):
+        if key.startswith('ORG_') and key.endswith('_FILES'):
             app.config[key] = [
                 os.path.expanduser(fpath) for fpath in app.config[key]]
 
