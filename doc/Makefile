@@ -41,10 +41,7 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
-source/intro.rst: ../README.rst
-	cp $< $@
-
-html: source/intro.rst
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

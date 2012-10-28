@@ -1,7 +1,6 @@
 .tox
 MANIFEST
 doc/build
-doc/source/intro.rst
 env
 tmp
 orgviz/static/*.js
