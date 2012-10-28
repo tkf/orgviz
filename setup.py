@@ -43,8 +43,5 @@ setup(
         'argparse',
         'flask',
         'orgparse',
-        # Make them optional:
-        'matplotlib',
-        'numpy',
     ],
 )
