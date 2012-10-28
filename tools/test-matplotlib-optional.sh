@@ -3,11 +3,14 @@
 set -e
 
 log_file=tmp/test-matplotlib-optional.log
+out_file=tmp/test-matplotlib-optional.out
 pid_file=tmp/test-matplotlib-optional.pid
 
 echo "############### Test: OrgViz can run wihout matplotlib ################"
 
 mkdir -p $(dirname $log_file)
+rm -f $log_file
+echo "Make sure matplotlib is not importable" >> $log_file
 printf .
 if python -c 'import matplotlib' 2> /dev/null
 then
@@ -18,16 +21,26 @@ fi
 printf .
 for port in {7000..8000}
 do
-    python -m orgviz.cli sample --port $port 2> $log_file &
+    echo "Starting server using port $port" >> $log_file
+    orgviz sample --port $port 2> $out_file &
     pid=$!
     echo $pid > $pid_file
-    sleep 1
     url="http://127.0.0.1:$port"
-    if grep "Running on $url/" $log_file > /dev/null
+    for _ in {1..30}
+    do
+        if grep "Running on $url/" $out_file > /dev/null
+        then
+            echo "Process Started." >> $log_file
+            break
+        fi
+        sleep 0.1
+    done
+    if grep "^Traceback " $out_file > /dev/null
     then
+        echo "Failed to start server using port $port." >> $log_file
+    else
         break
     fi
-    kill $pid
     port=""
 done
 
@@ -47,8 +60,11 @@ then
     exit 1
 fi
 
+echo "Requesting $url/orgviz." >> $log_file
 printf .
 wget $url/orgviz -O /dev/null --output-file /dev/null
+
+echo "Killing server (pid=$pid)." >> $log_file
 printf .
 kill $pid
 echo "OK"

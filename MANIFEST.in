@@ -1,0 +1,4 @@
+include orgviz/templates/*.html
+include orgviz/static/favicons/nuvola/author
+include orgviz/static/favicons/nuvola/thanks.to
+recursive-include orgviz/static *.css *.html *.ico *.inv *.js *.png *.txt
