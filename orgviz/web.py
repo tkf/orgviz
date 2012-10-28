@@ -153,50 +153,8 @@ def listjsonify(listdata):
     return json.dumps(listdata)
 
 
-@app.route('/events_data')
-def events_data():
-    start = request.args.get('start')
-    end = request.args.get('end')
-    start = int(start) if start.isdigit() else None
-    end = int(end) if end.isdigit() else None
-    if request.args.get('eventclass'):  # is not None or ''
-        eventclass = request.args['eventclass'].split(',')
-    else:
-        eventclass = ['deadline', 'scheduled']
-    if request.args.get('eventfilter'):  # is not None or ''
-        eventfilter = [
-            app.config['ORG_CAL_FILTERS'][int(i)][1] for i in
-            request.args['eventfilter'].split(',')]
-    else:
-        eventfilter = []
-    classifier = app.config['ORG_CAL_EVENT_CLASSIFIER']
-    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_CAL']
-    orgnodes = orgnodes_from_paths(orgpath_list)
-    events = gene_events(
-        orgnodes,
-        eventclass=eventclass, filters=eventfilter, classifier=classifier,
-        start=start, end=end)
-    return listjsonify(events)
-
-
-@app.route('/cal_config')
-def cal_config():
-    return jsonify(dict(
-        eventSources=app.config['ORG_CAL_ADD_EVENTSOURCES'],
-    ))
-
-
-def gene_get_static_file_under(parent):
-    def timeglider_get_file(path):
-        return url_for('static', filename=os.path.join(parent, path))
-    return timeglider_get_file
-
-tg_get_file = dict(
-    css=gene_get_static_file_under('lib/timeglider/css'),
-    js=gene_get_static_file_under('lib/timeglider/js'),
-    tg=gene_get_static_file_under('lib/timeglider/js/timeglider'),
-    )
-
+# ----------------------------------------------------------------------- #
+# Main
 
 @app.route('/')
 def index():
@@ -241,6 +199,74 @@ def page_orgviz():
         )
 
 
+@app.route('/events_data')
+def events_data():
+    start = request.args.get('start')
+    end = request.args.get('end')
+    start = int(start) if start.isdigit() else None
+    end = int(end) if end.isdigit() else None
+    if request.args.get('eventclass'):  # is not None or ''
+        eventclass = request.args['eventclass'].split(',')
+    else:
+        eventclass = ['deadline', 'scheduled']
+    if request.args.get('eventfilter'):  # is not None or ''
+        eventfilter = [
+            app.config['ORG_CAL_FILTERS'][int(i)][1] for i in
+            request.args['eventfilter'].split(',')]
+    else:
+        eventfilter = []
+    classifier = app.config['ORG_CAL_EVENT_CLASSIFIER']
+    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_CAL']
+    orgnodes = orgnodes_from_paths(orgpath_list)
+    events = gene_events(
+        orgnodes,
+        eventclass=eventclass, filters=eventfilter, classifier=classifier,
+        start=start, end=end)
+    return listjsonify(events)
+
+
+@app.route('/cal_config')
+def cal_config():
+    return jsonify(dict(
+        eventSources=app.config['ORG_CAL_ADD_EVENTSOURCES'],
+    ))
+
+
+@app.route('/dones_data')
+def dones_data():
+    from orgviz.dones import get_data
+    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_DONES']
+    orgnodes_list = map(get_orgnodes, orgpath_list)
+    return render_template(
+        "dones_data.html",
+        **get_data(orgnodes_list, orgpath_list, 'DONE'))
+
+
+@app.route('/graphs/<name>.png')
+def graphs_image(name):
+    filename = get_graph(
+        name,
+        app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_GRAPHS'],
+        'DONE')
+    return send_from_directory(app.config['CACHE_DIR'], filename)
+
+
+# ----------------------------------------------------------------------- #
+# Timeline
+
+def gene_get_static_file_under(parent):
+    def timeglider_get_file(path):
+        return url_for('static', filename=os.path.join(parent, path))
+    return timeglider_get_file
+
+
+tg_get_file = dict(
+    css=gene_get_static_file_under('lib/timeglider/css'),
+    js=gene_get_static_file_under('lib/timeglider/js'),
+    tg=gene_get_static_file_under('lib/timeglider/js/timeglider'),
+    )
+
+
 @app.route('/timeline/')
 def page_timeline():
     return render_template("timeline.html", title='Time line', **tg_get_file)
@@ -263,24 +289,8 @@ def timeline_data():
         orgnodes_list, orgpath_list, initial_zoom))
 
 
-@app.route('/dones_data')
-def dones_data():
-    from orgviz.dones import get_data
-    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_DONES']
-    orgnodes_list = map(get_orgnodes, orgpath_list)
-    return render_template(
-        "dones_data.html",
-        **get_data(orgnodes_list, orgpath_list, 'DONE'))
-
-
-@app.route('/graphs/<name>.png')
-def graphs_image(name):
-    filename = get_graph(
-        name,
-        app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_GRAPHS'],
-        'DONE')
-    return send_from_directory(app.config['CACHE_DIR'], filename)
-
+# ----------------------------------------------------------------------- #
+# CLI
 
 def add_arguments(parser):
     parser.add_argument(
