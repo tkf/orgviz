@@ -274,6 +274,7 @@ def timeline_data():
 # CLI
 
 def add_arguments(parser):
+    import tempfile
     parser.add_argument(
         '--conf', help='configuration file')
     parser.add_argument(
@@ -284,8 +285,10 @@ def add_arguments(parser):
     parser.add_argument(
         '--profile-sort-by', nargs='+', default=('time', 'calls'),
         help='columns to sort the result by.')
+    # FIXME: make graph cache in-memory and get rid of --cache-dir:
     parser.add_argument(
-        '--cache-dir', default='/tmp/orgviz')
+        '--cache-dir', default=os.path.join(tempfile.gettempdir(), 'orgviz'),
+        help='directory to cache generated plots.')
     parser.add_argument(
         '--no-cache', default=False, action='store_true')
     parser.add_argument(
@@ -293,7 +296,7 @@ def add_arguments(parser):
         help='port to listen (default: %(default)s)')
 
 
-def run(conf=None, debug=False, cache_dir='/tmp/orgviz', no_cache=False,
+def run(conf=None, debug=False, cache_dir=None, no_cache=False,
         profile=None, profile_sort_by=None, port=8000):
     """
     Start orgviz webserver.
@@ -314,11 +317,11 @@ def run(conf=None, debug=False, cache_dir='/tmp/orgviz', no_cache=False,
             app.config[key] = [
                 os.path.expanduser(fpath) for fpath in app.config[key]]
 
-    if not os.path.exists(cache_dir):
+    if cache_dir and not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
 
     if profile:
-        # hoock ProfilerMiddleware
+        # hook ProfilerMiddleware
         from werkzeug.contrib.profiler import ProfilerMiddleware
         app.wsgi_app = ProfilerMiddleware(
             app.wsgi_app,
