@@ -23,7 +23,7 @@ In OrgViz, you can...
 
 
 Install
-=======
+-------
 
 Installing OrgViz is as easy as::
 
@@ -34,7 +34,7 @@ If you want to draw graphs, install matplotlib_.
 
 
 Usage
-=====
+-----
 
 Use the following command to start OrgViz server and the open
 http://127.0.0.1:8000 in your browser::
@@ -57,7 +57,7 @@ OrgViz.
 
 
 Dependencies
-============
+------------
 
 - orgparse_
 - Flask_
@@ -74,7 +74,7 @@ Optional dependencies:
 
 
 License
-=======
+-------
 
 OrgViz is licensed under the terms of the MIT license (see COPYING).
 
