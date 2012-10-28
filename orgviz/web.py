@@ -263,21 +263,6 @@ def timeline_data():
         orgnodes_list, orgpath_list, initial_zoom))
 
 
-@app.route('/cal')
-def cal():
-    return render_template("cal.html", title='Calendar')
-
-
-@app.route('/dones')
-def dones():
-    from orgviz.dones import get_data
-    orgpath_list = app.config['ORG_FILE_COMMON'] + app.config['ORG_FILE_DONES']
-    orgnodes_list = map(get_orgnodes, orgpath_list)
-    return render_template(
-        "dones.html",
-        **get_data(orgnodes_list, orgpath_list, 'DONE'))
-
-
 @app.route('/dones_data')
 def dones_data():
     from orgviz.dones import get_data
@@ -286,11 +271,6 @@ def dones_data():
     return render_template(
         "dones_data.html",
         **get_data(orgnodes_list, orgpath_list, 'DONE'))
-
-
-@app.route('/graphs')
-def graphs():
-    return render_template("graphs.html", title='Graphs')
 
 
 @app.route('/graphs/<name>.png')
