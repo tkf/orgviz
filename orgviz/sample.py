@@ -10,8 +10,12 @@ ORG_COMMON_FILES = [{orgpath!r}]
 
 
 def add_arguments(parser):
-    parser.add_argument('--num', default=5, type=int,
+    parser.add_argument('--num', default=40, type=int,
                         help='number of org nodes to generate')
+    parser.add_argument('--pre-days', default=30, type=int,
+                        help='time range (min) to generate random events in.')
+    parser.add_argument('--post-days', default=30, type=int,
+                        help='time range (max) to generate random events in.')
     parser.add_argument('--no-server', action='store_true',
                         help='do not run web server.  '
                         'just generate sample files.')
@@ -20,7 +24,7 @@ def add_arguments(parser):
     web.add_arguments(parser)
 
 
-def run(directory, num, no_server, **kwds):
+def run(directory, num, pre_days, post_days, no_server, **kwds):
     """
     Generate a random org file and start OrgViz server to show it.
 
@@ -32,7 +36,7 @@ def run(directory, num, no_server, **kwds):
     orgpath = os.path.join(directory, 'random.org')
     confpath = os.path.join(directory, 'conf.py')
     with open(orgpath, 'wt') as f:
-        writeorg(f, num)
+        writeorg(f, num, pre_days=pre_days, post_days=post_days)
     with open(confpath, 'wt') as f:
         f.write(CONF_TEMPLATE.format(orgpath=orgpath))
 

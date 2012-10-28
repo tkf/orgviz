@@ -4,13 +4,14 @@ import datetime
 
 class RandomDatetime(object):
 
-    def __init__(self, datewidth=7):
-        self.datewidth = datewidth
+    def __init__(self, pre_days=30, post_days=30):
+        self.pre_days = pre_days
+        self.post_days = post_days
         self.now = datetime.datetime.now()
 
     def datetime(self):
-        delta = datetime.timedelta(random.randrange(- self.datewidth,
-                                                    self.datewidth + 1))
+        delta = datetime.timedelta(
+            random.randrange(- self.pre_days, self.post_days + 1))
         return self.now + delta
 
     def date(self):
@@ -42,10 +43,10 @@ def node(level, heading, todo=None, scheduled=None, deadline=None,
         yield '\n'
 
 
-def makeorg(num):
+def makeorg(num, **kwds):
     heading_pops = ['aaa', 'bbb', 'ccc']
     true_or_false = [True, False]
-    rd = RandomDatetime()
+    rd = RandomDatetime(**kwds)
     for i in range(num):
         kwds = {}
         if i == 0:
