@@ -12,6 +12,7 @@ tmpdir=tmp
 logf=$tmpdir/setup-jslib.log
 destdir=orgviz/static/lib
 
+# FullCalendar (http://arshaw.com/fullcalendar/)
 fc_name=fullcalendar-1.5.2
 fc_zipname=$fc_name.zip
 fc_url="http://arshaw.com/fullcalendar/downloads/"$fc_zipname
