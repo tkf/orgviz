@@ -108,7 +108,7 @@ def within_ndays_before(n):
     return predicate
 
 
-def plot_clocked_per_day(ax, orgnodes, done, days,
+def plot_clocked_per_day(ax, orgnodes, days,
                          ylabel='Clocked Time Per Day [h]'):
     events = nodes_to_events(
         orgnodes, filters=[within_ndays_before(days)], eventclass=['clock'])
@@ -137,7 +137,7 @@ def gene_clocked_par_day(orgnodes, done, days=30):
     fig = pylab.figure(figsize=(5, 4))
     fig.subplots_adjust(bottom=0.2)
     ax = fig.add_subplot(111)
-    plot_clocked_per_day(ax, orgnodes, done, days)
+    plot_clocked_per_day(ax, orgnodes, days)
     set_xaxis_format_date(ax)
     return fig
 
@@ -182,7 +182,7 @@ def gene_overview(orgnodes, done, days=30):
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
     plot_done_par_day(ax1, orgnodes, done, days, ylabel='Tasks/day [#]')
-    plot_clocked_per_day(ax2, orgnodes, done, days, ylabel='Clocked/day [h]')
+    plot_clocked_per_day(ax2, orgnodes, days, ylabel='Clocked/day [h]')
     ## ax1.set_yticks(ax1.get_yticks()[1:])
     ## ax2.set_yticks(ax2.get_yticks()[:-1])
     set_xaxis_format_date(ax1)
