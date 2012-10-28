@@ -183,6 +183,8 @@ setCalendarKeyBind = (doc, cal, cbConf, resizeCalendar, checkAutoReload) ->
     .bind("keydown", "l", -> cal.fullCalendar "next")
     .bind("keydown", "j", getCalScrollUpDown(cal, 100))
     .bind("keydown", "k", getCalScrollUpDown(cal, -100))
+    .bind("keydown", "u", getCalScrollUpDown(cal, -1 * window.innerHeight / 2))
+    .bind("keydown", "d", getCalScrollUpDown(cal, window.innerHeight / 2))
     # change views
     .bind("keydown", "q", -> cal.fullCalendar "changeView", "month")
     .bind("keydown", "w", -> cal.fullCalendar "changeView", "basicWeek")
