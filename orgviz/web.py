@@ -234,30 +234,9 @@ def graphs_image(name):
 # ----------------------------------------------------------------------- #
 # Timeline
 
-def gene_get_static_file_under(parent):
-    def timeglider_get_file(path):
-        return url_for('static', filename=os.path.join(parent, path))
-    return timeglider_get_file
-
-
-tg_get_file = dict(
-    css=gene_get_static_file_under('lib/timeglider/css'),
-    js=gene_get_static_file_under('lib/timeglider/js'),
-    tg=gene_get_static_file_under('lib/timeglider/js/timeglider'),
-    )
-
-
 @app.route('/timeline/')
 def page_timeline():
-    return render_template("timeline.html", title='Time line', **tg_get_file)
-
-
-@app.route('/timeline/<path:filepath>')
-def page_timeline_file(filepath):
-    """Redirect anything timeglider needs to its root directory"""
-    return redirect(
-        url_for(
-            'static', filename=os.path.join('lib', 'timeglider', filepath)))
+    return render_template("timeline.html", title='Time line')
 
 
 @app.route('/timeline_data')
