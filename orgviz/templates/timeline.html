@@ -4,74 +4,84 @@
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <title>{{ title }}</title>
 
-  <link rel="stylesheet"
-        href="{{ css('aristo/jquery-ui-1.8.5.custom.css') }}"
-        type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true" type="text/javascript"></script>
 
-  <link rel="stylesheet"
-        href="{{ tg('Timeglider.css') }}"
-        type="text/css" media="screen" title="no title" charset="utf-8">
-
-  <style type='text/css'>
-    body {
-      margin: 0;
-      padding 0;
-      font-family: Lucida Sans,Arial,sans-serif;
-    }
-
-    #ltmenu {
-      position: fixed;
-      padding: 5px;
-      background: #DDDDDD;
-      z-index: 1;
-      opacity: 0.8;
-    }
-
-    #placement {
-      margin: 0;
-    }
-  </style>
-</head>
-<body>
-  <div id="ltmenu">
-    <form>
-      <input type="checkbox" name="auto-reload" value="auto-reload"
-             id="auto-reload"> auto-reload (a)</input>
-    </form>
-  </div>
-  <div id='placement'></div>
-
-  <!-- 3rd party libs -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-  {% for name in [
-  'jquery-ui.js',
-  'jquery.tmpl.js', 'underscore-min.js', 'backbone-min.js', 'ba-debug.min.js',
-  'jquery.mousewheel.min.js', 'jquery.ui.ipad.js', 'raphael-min.js',
-  'jquery.global.js', 'ba-tinyPubSub.js',
-  ] -%}
-  <script src="{{ js(name) }}" type="text/javascript" charset="utf-8"></script>
-  {% endfor %}
-
-  <!-- TIMEGLIDER -->
-  {% for name in [
-  'TG_Date.js', 'TG_Org.js', 'TG_Timeline.js', 'TG_TimelineView.js',
-  'TG_Mediator.js', 'timeglider.timeline.widget.js',
-  ] -%}
-  <script src="{{ tg(name) }}" type="text/javascript" charset="utf-8"></script>
   <script
      type='text/javascript'
-     src="{{ url_for('static', filename='lib/jquery/jquery.hotkeys.js') }}"
+     src="{{ url_for('static', filename='lib/jquery/jquery-1.5.2.min.js') }}"
      ></script>
-  {% endfor %}
-  <script src="{{ url_for('static', filename='timeline.js') }}"
-          type="text/javascript" charset="utf-8"></script>
+  <script>
+  var tl;
+  function onLoad(){
+    $.getJSON("{{ url_for('timeline_data') }}", setUpTL);
+  }
 
-  <script type="text/javascript">
-    var TL;  // for debug
-    $(document).ready(function () {
-      TL = setupTimeline($("#placement"), "{{ url_for('timeline_data') }}");
-    });
+  function setUpTL(timeline_data) {
+      var tl_el = document.getElementById("tl");
+      var eventSource1 = new Timeline.DefaultEventSource();
+
+      var theme1 = Timeline.ClassicTheme.create();
+      theme1.autoWidth = true; // Set the Timeline's "width" automatically.
+                               // Set autoWidth on the Timeline's first band's theme,
+                               // will affect all bands.
+      theme1.timeline_start = new Date(Date.UTC(2011, 0, 1));
+      theme1.timeline_stop  = new Date(Date.UTC(2013, 0, 1));
+
+      var d = Timeline.DateTime.parseIso8601DateTime("2012-10-01")
+      var bandInfos = [
+          Timeline.createBandInfo({
+              width:          45, // set to a minimum, autoWidth will then adjust
+              intervalUnit:   Timeline.DateTime.YEAR,
+              intervalPixels: 200,
+              eventSource:    eventSource1,
+
+            zoomIndex:      10,
+            zoomSteps:      new Array(
+              {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR},
+              {pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR},
+              {pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR},
+              {pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR},
+              {pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY},
+              {pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY},
+              {pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY},
+              {pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY},
+              {pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH},
+              {pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH},
+              {pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH}, // DEFAULT zoomIndex
+              {pixelsPerInterval:  50,  unit: Timeline.DateTime.MONTH},
+              {pixelsPerInterval: 400,  unit: Timeline.DateTime.YEAR},
+              {pixelsPerInterval: 200,  unit: Timeline.DateTime.YEAR},
+              {pixelsPerInterval: 100,  unit: Timeline.DateTime.YEAR}
+            ),
+
+              date:           d,
+              theme:          theme1,
+              layout:         'original'  // original, overview, detailed
+          })
+      ];
+
+      // create the Timeline
+      tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
+
+      var url = '.'; // The base url for image, icon and background image
+                     // references in the data
+      eventSource1.loadJSON(timeline_data, url); // The data was stored into the 
+                                                 // timeline_data variable.
+      tl.layout(); // display the Timeline
+  }
+
+  var resizeTimerID = null;
+  function onResize() {
+      if (resizeTimerID == null) {
+          resizeTimerID = window.setTimeout(function() {
+              resizeTimerID = null;
+              tl.layout();
+          }, 500);
+      }
+  }
   </script>
-
+</head>
+<body onload="onLoad();" onresize="onResize();">
+  <div id=tl></div>
 </body>
 </html>
