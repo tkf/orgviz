@@ -1,8 +1,6 @@
 OrgViz - Browser based app to view org-mode files from different directions
 ===========================================================================
 
-|build-status|
-
 .. warning:: Work in progress.
 
 In OrgViz, you can...
@@ -15,6 +13,15 @@ In OrgViz, you can...
 
 * Write complex filter settings in Python.
 
+
+Links
+-----
+
+* `Documentation (at Read the Docs) <http://orgviz.readthedocs.org/>`_
+* `Repository (at GitHub) <https://github.com/tkf/orgviz>`_
+* `Issue tracker (at GitHub) <https://github.com/tkf/orgviz/issues>`_
+* `PyPI <http://pypi.python.org/pypi/orgviz>`_
+* `Travis CI <https://travis-ci.org/#!/tkf/orgviz>`_ |build-status|
 
 .. |build-status|
    image:: https://secure.travis-ci.org/tkf/orgviz.png?branch=master
@@ -130,13 +137,3 @@ OrgViz bundles libraries with the following licenses.
 .. _jQuery Hotkeys: https://github.com/tzuryby/jquery.hotkeys
 .. _ColorBox: http://jacklmoore.com/colorbox
 .. _Nuvola: http://www.icon-king.com/projects/nuvola/
-
-
-Links
------
-
-* `Documentation (at Read the Docs) <http://orgviz.readthedocs.org/>`_
-* `Repository (at GitHub) <https://github.com/tkf/orgviz>`_
-* `Issue tracker (at GitHub) <https://github.com/tkf/orgviz/issues>`_
-* `PyPI <http://pypi.python.org/pypi/orgviz>`_
-* `Travis CI <https://travis-ci.org/#!/tkf/orgviz>`_
