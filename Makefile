@@ -1,4 +1,4 @@
-.PHONY : test build upload clean-tox clean cog jslib update-jslib clean-tmp
+.PHONY : test build doc upload clean-tox clean cog jslib update-jslib clean-tmp
 
 
 ## Test
@@ -11,6 +11,11 @@ clean-tox:
 
 ## Bulid
 build: jslib coffee favicons
+
+
+## Document
+doc: cog
+	make -C doc html
 
 
 ### cog
