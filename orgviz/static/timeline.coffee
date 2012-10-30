@@ -4,6 +4,7 @@ loadEventData = (tl, eventSource, url, callback) ->
     eventSource.loadJSON(timeline_data, url)
     tl.layout()
     callback() if callback?
+  return
 
 
 panTimeline = (tl, delta) ->
@@ -12,6 +13,7 @@ panTimeline = (tl, delta) ->
   xmax = b.getMaxVisibleDate().getTime()
   dx = (xmax - xmin) * delta / 100
   b.setCenterVisibleDate b.getCenterVisibleDate().getTime() + dx
+  return
 
 
 zoomTimeline = (tl, zoomIn) ->
@@ -20,6 +22,7 @@ zoomTimeline = (tl, zoomIn) ->
   x = b.dateToPixelOffset b.getCenterVisibleDate().getTime()
   y = undefined  # reading the source, it seems that y is not used
   tl.zoom zoomIn, x, y, $("div.timeline-band")[0]
+  return
 
 
 #### Get a function to check the input checkbox and start/stop auo-reload
@@ -49,6 +52,7 @@ getCheckedToggleFunc = (checkbox, callback) ->
     else
       checkbox.attr "checked", "checked"
     callback() if callback?
+    return
 
 
 setupKeybinds = (keyboardInput, tl) ->
