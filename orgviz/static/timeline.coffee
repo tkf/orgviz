@@ -22,6 +22,35 @@ zoomTimeline = (tl, zoomIn) ->
   tl.zoom zoomIn, x, y, $("div.timeline-band")[0]
 
 
+#### Get a function to check the input checkbox and start/stop auo-reload
+#
+getCheckAutoReload = (reload) ->
+  autoReloadId = false
+  autoReload = ->  # see: http://stackoverflow.com/questions/1036612/
+    autoReloadId = window.setTimeout(->
+      reload()
+      autoReload()
+    , 1000)
+
+  # return checkAutoReload
+  ->
+    if $("#auto-reload").is(":checked")
+      autoReload()
+    else
+      clearTimeout autoReloadId
+
+
+#### A general function to toggle checkbox and call callback if specified
+#
+getCheckedToggleFunc = (checkbox, callback) ->
+  ->  # see: http://stackoverflow.com/questions/426258/
+    if checkbox.is(":checked")
+      checkbox.removeAttr "checked"
+    else
+      checkbox.attr "checked", "checked"
+    callback() if callback?
+
+
 setupKeybinds = (tl) ->
   $(document)
     .bind("keydown", "h", (-> panTimeline tl, -10))
@@ -76,8 +105,6 @@ setupTimeline = (data_source) ->
   tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
   loadEventData tl, eventSource, data_source, (-> setupKeybinds tl)
-  $(document).bind "keydown", "g", ->
-    loadEventData tl, eventSource, data_source
 
   resizeTimerID = null
   $(document).resize ->
@@ -87,6 +114,17 @@ setupTimeline = (data_source) ->
         tl.layout()
       , 500)
 
+  # set auto-reload
+  autoReloadCheckbox = $("#auto-reload")
+  checkAutoReload = getCheckAutoReload ->
+    loadEventData tl, eventSource, data_source
+  autoReloadCheckbox.change checkAutoReload
+  checkAutoReload()
+
+  $(document)
+    .bind("keydown", "g", -> loadEventData tl, eventSource, data_source)
+    .bind("keydown", "a",
+      getCheckedToggleFunc autoReloadCheckbox, checkAutoReload)
 
 root = exports ? this
 root.setupTimeline = setupTimeline

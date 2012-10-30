@@ -37,6 +37,12 @@
      ></script>
 </head>
 <body>
+  <div id="ltmenu">
+    <form>
+      <input type="checkbox" name="auto-reload" value="auto-reload"
+             id="auto-reload"> auto-reload (a)</input>
+    </form>
+  </div>
   <div id=tl></div>
   <script>
     setupTimeline("{{ url_for('timeline_data') }}");
