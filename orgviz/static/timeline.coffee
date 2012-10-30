@@ -1,3 +1,10 @@
+loadEventData = (tl, eventSource, url, callback) ->
+  Timeline.loadJSON url, (timeline_data) ->
+    eventSource.loadJSON(timeline_data, url)
+    tl.layout()
+    callback() if callback
+
+
 panTimeline = (tl, delta) ->
   b = tl.getBand 0
   xmin = b.getMinVisibleDate().getTime()
@@ -67,12 +74,7 @@ setupTimeline = (data_source) ->
   tl_el = document.getElementById("tl")
   tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
-  Timeline.loadJSON data_source, (timeline_data) ->
-    url = '.'
-    eventSource.loadJSON(timeline_data, url)
-    tl.layout()
-
-    setupKeybinds tl
+  loadEventData tl, eventSource, data_source, (-> setupKeybinds tl)
 
   resizeTimerID = null
   $(document).resize ->
