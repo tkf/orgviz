@@ -128,3 +128,7 @@ setupTimeline = (data_source) ->
 
 root = exports ? this
 root.setupTimeline = setupTimeline
+
+# Note:
+# To grab Timeline objects in browser, execute this:
+#     tl = Timeline.timelines[0]; b = tl.getBand(0)
