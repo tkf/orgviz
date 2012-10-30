@@ -104,7 +104,8 @@ setupTimeline = (data_source) ->
   tl_el = document.getElementById("tl")
   tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
-  loadEventData tl, eventSource, data_source, (-> setupKeybinds tl)
+  reload = (cb) -> loadEventData tl, eventSource, data_source, cb
+  reload -> setupKeybinds tl
 
   resizeTimerID = null
   $(document).resize ->
@@ -116,13 +117,12 @@ setupTimeline = (data_source) ->
 
   # set auto-reload
   autoReloadCheckbox = $("#auto-reload")
-  checkAutoReload = getCheckAutoReload ->
-    loadEventData tl, eventSource, data_source
+  checkAutoReload = getCheckAutoReload reload
   autoReloadCheckbox.change checkAutoReload
   checkAutoReload()
 
   $(document)
-    .bind("keydown", "g", -> loadEventData tl, eventSource, data_source)
+    .bind("keydown", "g", reload)
     .bind("keydown", "a",
       getCheckedToggleFunc autoReloadCheckbox, checkAutoReload)
 
