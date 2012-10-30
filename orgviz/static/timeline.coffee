@@ -106,7 +106,8 @@ setupTimeline = (data_source) ->
 
   # `Timeline._Band' uses a text input box to capture keyboard events.
   # Let's mix keyboard shortcut to this element.
-  keyboardInput = $(tl.getBand(0)._keyboardInput)
+  keyboardInput = $([$(document),  $("div.timeline-band-input > input")])
+    .map -> this.toArray()
 
   reload = (cb) -> loadEventData tl, eventSource, data_source, cb
   reload -> setupKeybinds keyboardInput, tl
