@@ -26,7 +26,6 @@
                                // will affect all bands.
       theme1.mouseWheel = 'zoom';
 
-      var d = Timeline.DateTime.parseIso8601DateTime("2012-10-01")
       var bandInfos = [
           Timeline.createBandInfo({
               width:          45, // set to a minimum, autoWidth will then adjust
@@ -54,7 +53,7 @@
               {pixelsPerInterval: 100,  unit: Timeline.DateTime.YEAR}
             ),
 
-              date:           d,
+              date:           Date(),
               theme:          theme1,
               layout:         'original'  // original, overview, detailed
           })
