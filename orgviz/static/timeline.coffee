@@ -49,16 +49,14 @@ setupTimeline = (data_source) ->
     eventSource.loadJSON(timeline_data, url)
     tl.layout()
 
-
-resizeTimerID = null
-onResize = ->
-  if resizeTimerID == null
-    resizeTimerID = window.setTimeout(->
-      resizeTimerID = null
-      tl.layout()
-    , 500)
+    resizeTimerID = null
+    $(document).resize ->
+      if resizeTimerID == null
+        resizeTimerID = window.setTimeout(->
+          resizeTimerID = null
+          tl.layout()
+        , 500)
 
 
 root = exports ? this
 root.setupTimeline = setupTimeline
-root.onResize = onResize

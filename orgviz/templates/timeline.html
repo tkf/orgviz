@@ -27,7 +27,7 @@
      src="{{ url_for('static', filename='timeline.js') }}"
      ></script>
 </head>
-<body onresize="onResize();">
+<body>
   <div id=tl></div>
   <script>
     setupTimeline("{{ url_for('timeline_data') }}");
