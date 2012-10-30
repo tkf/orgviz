@@ -1,3 +1,17 @@
+zoomTimeline = (tl, zoomIn) ->
+  # NOTE: assuming there is only one timeline and only one band
+  b = tl.getBand 0
+  x = b.dateToPixelOffset Date.now()
+  y = undefined  # reading the source, it seems that y is not used
+  tl.zoom zoomIn, x, y, $("div.timeline-band")[0]
+
+
+setupKeybinds = (tl) ->
+  $(document)
+    .bind("keydown", "o", (-> zoomTimeline tl, false))
+    .bind("keydown", "i", (-> zoomTimeline tl, true))
+
+
 #### setup timeline
 #
 # data_source: string
@@ -48,6 +62,8 @@ setupTimeline = (data_source) ->
     url = '.'
     eventSource.loadJSON(timeline_data, url)
     tl.layout()
+
+    setupKeybinds tl
 
     resizeTimerID = null
     $(document).resize ->
