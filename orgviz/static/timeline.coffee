@@ -3,7 +3,7 @@ loadEventData = (tl, eventSource, url, callback) ->
     eventSource.clear()
     eventSource.loadJSON(timeline_data, url)
     tl.layout()
-    callback() if callback
+    callback() if callback?
 
 
 panTimeline = (tl, delta) ->
