@@ -1,5 +1,6 @@
 loadEventData = (tl, eventSource, url, callback) ->
   Timeline.loadJSON url, (timeline_data) ->
+    eventSource.clear()
     eventSource.loadJSON(timeline_data, url)
     tl.layout()
     callback() if callback
@@ -75,6 +76,8 @@ setupTimeline = (data_source) ->
   tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
   loadEventData tl, eventSource, data_source, (-> setupKeybinds tl)
+  $(document).bind "keydown", "g", ->
+    loadEventData tl, eventSource, data_source
 
   resizeTimerID = null
   $(document).resize ->
