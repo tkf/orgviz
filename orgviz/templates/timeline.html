@@ -6,14 +6,10 @@
 
   <script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true" type="text/javascript"></script>
 
-  <script
-     type='text/javascript'
-     src="{{ url_for('static', filename='lib/jquery/jquery-1.5.2.min.js') }}"
-     ></script>
   <script>
   var tl;
   function onLoad(){
-    $.getJSON("{{ url_for('timeline_data') }}", setUpTL);
+    Timeline.loadJSON("{{ url_for('timeline_data') }}", setUpTL);
   }
 
   function setUpTL(timeline_data) {
