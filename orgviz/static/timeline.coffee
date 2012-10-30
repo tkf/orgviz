@@ -1,3 +1,11 @@
+panTimeline = (tl, delta) ->
+  b = tl.getBand 0
+  xmin = b.getMinVisibleDate().getTime()
+  xmax = b.getMaxVisibleDate().getTime()
+  dx = (xmax - xmin) * delta / 100
+  b.setCenterVisibleDate b.getCenterVisibleDate().getTime() + dx
+
+
 zoomTimeline = (tl, zoomIn) ->
   # NOTE: assuming there is only one timeline and only one band
   b = tl.getBand 0
@@ -8,6 +16,8 @@ zoomTimeline = (tl, zoomIn) ->
 
 setupKeybinds = (tl) ->
   $(document)
+    .bind("keydown", "h", (-> panTimeline tl, -10))
+    .bind("keydown", "l", (-> panTimeline tl, +10))
     .bind("keydown", "o", (-> zoomTimeline tl, false))
     .bind("keydown", "i", (-> zoomTimeline tl, true))
 
