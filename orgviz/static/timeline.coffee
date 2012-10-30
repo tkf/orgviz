@@ -3,8 +3,26 @@
 # data_source: string
 #     URL to load data from
 setupTimeline = (data_source) ->
+  zoomSteps = new Array(
+    {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval:  50,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval: 400,  unit: Timeline.DateTime.YEAR},
+    {pixelsPerInterval: 200,  unit: Timeline.DateTime.YEAR},
+    {pixelsPerInterval: 100,  unit: Timeline.DateTime.YEAR}
+  )
+  zoomIndex = 10
+
   Timeline.loadJSON data_source, (timeline_data) ->
-    tl_el = document.getElementById("tl")
     eventSource1 = new Timeline.DefaultEventSource()
 
     theme1 = Timeline.ClassicTheme.create()
@@ -14,34 +32,17 @@ setupTimeline = (data_source) ->
     bandInfos = [
       Timeline.createBandInfo(
         width:          45,
-        intervalUnit:   Timeline.DateTime.MONTH,
-        intervalPixels: 100,
+        intervalUnit:   zoomSteps[zoomIndex].unit,
+        intervalPixels: zoomSteps[zoomIndex].pixelsPerInterval,
+        zoomIndex:      zoomIndex,
+        zoomSteps:      zoomSteps,
         eventSource:    eventSource1,
-
-        zoomIndex:      10,
-        zoomSteps:      new Array(
-          {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR},
-          {pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR},
-          {pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR},
-          {pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR},
-          {pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY},
-          {pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY},
-          {pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY},
-          {pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY},
-          {pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH},
-          {pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH},
-          {pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH},
-          {pixelsPerInterval:  50,  unit: Timeline.DateTime.MONTH},
-          {pixelsPerInterval: 400,  unit: Timeline.DateTime.YEAR},
-          {pixelsPerInterval: 200,  unit: Timeline.DateTime.YEAR},
-          {pixelsPerInterval: 100,  unit: Timeline.DateTime.YEAR}
-        ),
-
         theme:          theme1,
         layout:         'original',
       )
     ]
 
+    tl_el = document.getElementById("tl")
     tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
     url = '.'
