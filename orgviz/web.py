@@ -239,6 +239,17 @@ def page_timeline():
     return render_template("timeline.html", title='Time line')
 
 
+@app.route('/timeline/__history__.html')
+def page_timeline_history():
+    """
+    Dummy page for Simile Widgets.
+
+    See: `Exhibit/Template history .html - SIMILE Widgets
+    <http://simile-widgets.org/wiki/Exhibit/Template_history_.html>`_
+    """
+    return "<html><body></body></html>"
+
+
 @app.route('/timeline_data')
 def timeline_data():
     from .timeline import gene_timeline
