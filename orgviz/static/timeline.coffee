@@ -51,8 +51,8 @@ getCheckedToggleFunc = (checkbox, callback) ->
     callback() if callback?
 
 
-setupKeybinds = (tl) ->
-  $(document)
+setupKeybinds = (keyboardInput, tl) ->
+  keyboardInput
     .bind("keydown", "h", (-> panTimeline tl, -10))
     .bind("keydown", "l", (-> panTimeline tl, +10))
     .bind("keydown", "o", (-> zoomTimeline tl, false))
@@ -104,8 +104,12 @@ setupTimeline = (data_source) ->
   tl_el = document.getElementById("tl")
   tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
+  # `Timeline._Band' uses a text input box to capture keyboard events.
+  # Let's mix keyboard shortcut to this element.
+  keyboardInput = $(tl.getBand(0)._keyboardInput)
+
   reload = (cb) -> loadEventData tl, eventSource, data_source, cb
-  reload -> setupKeybinds tl
+  reload -> setupKeybinds keyboardInput, tl
 
   resizeTimerID = null
   $(document).resize ->
@@ -121,7 +125,7 @@ setupTimeline = (data_source) ->
   autoReloadCheckbox.change checkAutoReload
   checkAutoReload()
 
-  $(document)
+  keyboardInput
     .bind("keydown", "g", reload)
     .bind("keydown", "a",
       getCheckedToggleFunc autoReloadCheckbox, checkAutoReload)
