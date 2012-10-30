@@ -23,11 +23,11 @@ setupTimeline = (data_source) ->
   zoomIndex = 10
 
   Timeline.loadJSON data_source, (timeline_data) ->
-    eventSource1 = new Timeline.DefaultEventSource()
+    eventSource = new Timeline.DefaultEventSource()
 
-    theme1 = Timeline.ClassicTheme.create()
-    theme1.autoWidth = true
-    theme1.mouseWheel = 'zoom'
+    theme = Timeline.ClassicTheme.create()
+    theme.autoWidth = true
+    theme.mouseWheel = 'zoom'
 
     bandInfos = [
       Timeline.createBandInfo(
@@ -36,8 +36,8 @@ setupTimeline = (data_source) ->
         intervalPixels: zoomSteps[zoomIndex].pixelsPerInterval,
         zoomIndex:      zoomIndex,
         zoomSteps:      zoomSteps,
-        eventSource:    eventSource1,
-        theme:          theme1,
+        eventSource:    eventSource,
+        theme:          theme,
         layout:         'original',
       )
     ]
@@ -46,7 +46,7 @@ setupTimeline = (data_source) ->
     tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
     url = '.'
-    eventSource1.loadJSON(timeline_data, url)
+    eventSource.loadJSON(timeline_data, url)
     tl.layout()
 
 
