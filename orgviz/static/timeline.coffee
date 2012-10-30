@@ -1,122 +1,63 @@
-#### Fit `fit` element to `to` element
-fitTo = (fit, to, bottom = 0, right = 0) ->
-  pos = fit.position()
-  fit.height(to.height() - pos.top - bottom)
-  fit.width(to.width() - pos.left - right)
-
-
-#### Get a function resize timeglider to window
-getResizeTimeGlider = (tg) ->
-  tgcont = tg.children(".timeglider-container")
-  win = $(window)
-  ->
-    fitTo tg, win
-    fitTo tgcont, win
-
-
-#### Get a function to check the input checkbox and start/stop auo-reload
-#
-getCheckAutoReload = (reload) ->
-  autoReloadId = false
-  autoReload = ->  # see: http://stackoverflow.com/questions/1036612/
-    autoReloadId = window.setTimeout(->
-      reload()
-      autoReload()
-    , 1000)
-
-  # return checkAutoReload
-  ->
-    if $("#auto-reload").is(":checked")
-      autoReload()
-    else
-      clearTimeout autoReloadId
-
-
-#### A general function to toggle checkbox and call callback if specified
-#
-getCheckedToggleFunc = (checkbox, callback) ->
-  ->  # see: http://stackoverflow.com/questions/426258/
-    if checkbox.is(":checked")
-      checkbox.removeAttr "checked"
-    else
-      checkbox.attr "checked", "checked"
-    callback() if callback?
-
-
-#### Get a function to emulate mouse push of `delay` time
-#
-getPushPan = (left, right, delay) ->
-  tid = false
-  pushed = false
-  push = (button) ->
-    if not pushed
-      pushed = true
-      button.mousedown()
-      tid = window.setTimeout( ->
-        pushed = false
-        button.mouseup()
-      , delay)
-  [(-> push left), (-> push right)]
-
-
 #### setup timeline
 #
-# tg: jq-element
-#     e.g.: $("#placement")
 # data_source: string
 #     URL to load data from
-setupTimeline = (tg, data_source) ->
-  # make tg 100% height/width, before setting up timeglider
-  fitTo tg, $(window), 10  # 10px offset at bottom
+setupTimeline = (data_source) ->
+  Timeline.loadJSON data_source, (timeline_data) ->
+    tl_el = document.getElementById("tl")
+    eventSource1 = new Timeline.DefaultEventSource()
 
-  tg.timeline(
-    min_zoom: 1
-    max_zoom: 40
-    data_source: data_source
-  )
+    theme1 = Timeline.ClassicTheme.create()
+    theme1.autoWidth = true
+    theme1.mouseWheel = 'zoom'
 
-  tg_actor = tg.data("timeline")
+    bandInfos = [
+      Timeline.createBandInfo(
+        width:          45,
+        intervalUnit:   Timeline.DateTime.MONTH,
+        intervalPixels: 100,
+        eventSource:    eventSource1,
 
-  # set auto-reload
-  autoReloadCheckbox = $("#auto-reload")
-  checkAutoReload = getCheckAutoReload(-> tg_actor.load data_source)
-  autoReloadCheckbox.change checkAutoReload
-  checkAutoReload()
+        zoomIndex:      10,
+        zoomSteps:      new Array(
+          {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR},
+          {pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR},
+          {pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR},
+          {pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR},
+          {pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY},
+          {pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY},
+          {pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY},
+          {pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY},
+          {pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH},
+          {pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH},
+          {pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH},
+          {pixelsPerInterval:  50,  unit: Timeline.DateTime.MONTH},
+          {pixelsPerInterval: 400,  unit: Timeline.DateTime.YEAR},
+          {pixelsPerInterval: 200,  unit: Timeline.DateTime.YEAR},
+          {pixelsPerInterval: 100,  unit: Timeline.DateTime.YEAR}
+        ),
 
-  # there is no "pan" api, so just push these buttons!
-  panButtonLeft  = $(".timeglider-pan-left")
-  panButtonRight = $(".timeglider-pan-right")
-  [pushLeft, pushRight] = getPushPan panButtonLeft, panButtonRight, 100
+        theme:          theme1,
+        layout:         'original',
+      )
+    ]
 
-  $(document)
-    .bind("keydown", "r", -> tg_actor.load data_source)
-    .bind("keydown", "a",
-      getCheckedToggleFunc autoReloadCheckbox, checkAutoReload)
-    .bind("keydown", "i", -> tg_actor.zoom -1)  # zoom-in
-    .bind("keydown", "o", -> tg_actor.zoom +1)  # zoom-out
-    .bind("keydown", "h", pushLeft)
-    .bind("keydown", "l", pushRight)
-    #### binding keyup/down to moudeup/down didn't work
-    # .bind("keydown", "h", -> panButtonLeft.mousedown())
-    # .bind("keydown", "l", -> panButtonRight.mousedown())
-    # .bind("keyup", "h", -> panButtonLeft.mouseup())
-    # .bind("keyup", "l", -> panButtonRight.mouseup())
-    #### this seems to have no effect...
-    .bind("keydown", "g", ->
-      panButtonLeft.mouseup()
-      panButtonRight.mouseup()
-      console.log("G!"))
+    tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
 
-  # this did not work.  height can't be re-fitted.
-  # # auto-resize
-  # resizeTimeGlider = getResizeTimeGlider(tg)
-  # $(window).bind "resize", resizeTimeGlider
-  # resizeTimeGlider()
+    url = '.'
+    eventSource1.loadJSON(timeline_data, url)
+    tl.layout()
 
-  # return
-  tg: tg
-  tg_actor: tg_actor
+
+resizeTimerID = null
+onResize = ->
+  if resizeTimerID == null
+    resizeTimerID = window.setTimeout(->
+      resizeTimerID = null
+      tl.layout()
+    , 500)
 
 
 root = exports ? this
 root.setupTimeline = setupTimeline
+root.onResize = onResize
