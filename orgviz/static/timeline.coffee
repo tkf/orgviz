@@ -1,7 +1,7 @@
 zoomTimeline = (tl, zoomIn) ->
   # NOTE: assuming there is only one timeline and only one band
   b = tl.getBand 0
-  x = b.dateToPixelOffset Date.now()
+  x = b.dateToPixelOffset b.getCenterVisibleDate().getTime()
   y = undefined  # reading the source, it seems that y is not used
   tl.zoom zoomIn, x, y, $("div.timeline-band")[0]
 
