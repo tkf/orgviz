@@ -175,33 +175,20 @@
   </div>
   <div id='calendar'></div>
 </div>
+
 <div id='container-graphs'>
-<div style="display:inline-block">
-  <h4>Clocked time per day</h4>
-  <img class="graph"
-       alt="Clocked time per day"
-       src="{{ url_for('graphs_image', name='clocked_par_day') }}" />
+  {% for (name, title) in graphs -%}
+  <div style="display:inline-block">
+    <h4>{{ title }}</h4>
+    <img class="graph"
+         alt="{{ title }}"
+         src="{{ url_for('graphs_image', name=name) }}" />
+  </div>
+  {%- endfor %}
 </div>
-<div style="display:inline-block">
-  <h4>Tasks done par day</h4>
-  <img class="graph"
-       alt="Tasks done par day"
-       src="{{ url_for('graphs_image', name='done_par_day') }}" />
-</div>
-<div style="display:inline-block">
-  <h4>Top 10 tags in closed tasks</h4>
-  <img class="graph"
-       alt="Top 10 tags in closed tasks"
-       src="{{ url_for('graphs_image', name='tags_dist') }}" />
-</div>
-<div style="display:inline-block">
-  <h4>Clocked and closed activities</h4>
-  <img class="graph"
-       alt="Clocked and closed activities"
-       src="{{ url_for('graphs_image', name='clocked_and_closed') }}" />
-</div>
-</div>
+
 <div id='container-dones'></div>
+
 <script type='text/javascript'>
   var favicon = {
     "calendar": "{{ url_for('static', filename='favicons/nuvola/date.ico') }}",

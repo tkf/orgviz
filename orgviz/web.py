@@ -128,6 +128,12 @@ def page_orgviz():
         cal_perspectives=cal_perspectives,
         cal_perspectives_data=cal_perspectives_data,
         cal_eventclasses=cal_eventclasses,
+        graphs=[
+            ('clocked_par_day', 'Clocked time per day'),
+            ('done_par_day', 'Tasks done par day'),
+            ('tags_dist', 'Top 10 tags in closed tasks'),
+            ('clocked_and_closed', 'Clocked and closed activities'),
+        ],
         )
 
 
