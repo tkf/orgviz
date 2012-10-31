@@ -21,6 +21,8 @@ from .utils.date import total_seconds
 from matplotlib.dates import  DateFormatter, WeekdayLocator, \
      DayLocator, MONDAY  # , HourLocator
 
+FIGSIZE = (4, 3)
+
 mondays = WeekdayLocator(MONDAY)        # major ticks on the mondays
 alldays = DayLocator()                  # minor ticks on the days
 weekFormatter = DateFormatter('%b %d')  # Eg, Jan 12
@@ -76,7 +78,7 @@ def gene_clocked_par_day(orgnodes, done, days=30):
     """
     Draw graph from org files: clocked task par day
     """
-    fig = pylab.figure(figsize=(5, 4))
+    fig = pylab.figure(figsize=FIGSIZE)
     fig.subplots_adjust(bottom=0.2)
     ax = fig.add_subplot(111)
     plot_clocked_per_day(ax, orgnodes, days)
@@ -107,7 +109,7 @@ def gene_done_par_day(orgnodes, done, days=30):
     """
     Draw graph from org file: done (closed) task par day
     """
-    fig = pylab.figure(figsize=(5, 4))
+    fig = pylab.figure(figsize=FIGSIZE)
     fig.subplots_adjust(bottom=0.2)
     ax = fig.add_subplot(111)
     plot_done_par_day(ax, orgnodes, done, days)
@@ -152,7 +154,7 @@ def gene_tags_dist(orgnodes, done='THIS IS DUMMY ARG', **kwds):
     """
     Plot top N tags of closed tasks and the number of the tasks.
     """
-    fig = pylab.figure(figsize=(5, 4))
+    fig = pylab.figure(figsize=FIGSIZE)
     ax = fig.add_subplot(111)
     plot_tags_dist(ax, orgnodes, **kwds)
     return fig
@@ -195,7 +197,7 @@ def gene_clocked_and_closed(orgnodes, done='THIS IS DUMMY ARG', **kwds):
     """
     Plot punchcard-like clocked/closed activity.
     """
-    fig = pylab.figure(figsize=(5, 4))
+    fig = pylab.figure(figsize=FIGSIZE)
     fig.subplots_adjust(bottom=0.2)
     ax = fig.add_subplot(111)
     plot_clocked_and_closed(ax, orgnodes, **kwds)
@@ -206,7 +208,7 @@ def gene_overview(orgnodes, done, days=30):
     """
     Draw graph from org file: overview
     """
-    fig = pylab.figure(figsize=(5, 4))
+    fig = pylab.figure(figsize=FIGSIZE)
     fig.subplots_adjust(bottom=0.2)
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
