@@ -234,7 +234,8 @@ def graphs_image(name):
         get_graph(
             name,
             app.config['ORG_COMMON_FILES'] + app.config['ORG_GRAPHS_FILES'],
-            'DONE'))
+            'DONE'),
+        attachment_filename='{0}.png'.format(name))
 
 
 # ----------------------------------------------------------------------- #
