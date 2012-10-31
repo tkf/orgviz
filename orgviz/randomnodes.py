@@ -1,7 +1,7 @@
 import random
 import datetime
 
-from .utils.date import timedeltastr
+from .utils.date import timedeltastr, total_seconds
 
 
 class RandomDatetime(object):
@@ -24,6 +24,19 @@ class RandomDatetime(object):
 
     def date(self, **kwds):
         return datetime.date(*self.datetime(**kwds).timetuple()[:3])
+
+    def datetimerange(self, **kwds):
+        return self._start_end(self.datetime(**kwds), self.datetime(**kwds))
+
+    def daterange(self, **kwds):
+        return self._start_end(self.datetime(**kwds), self.datetime(**kwds))
+
+    @staticmethod
+    def _start_end(d1, d2):
+        if total_seconds(d1 - d2) < 0:
+            return (d1, d2)
+        else:
+            return (d2, d1)
 
 
 def node(level, heading, todo=None, scheduled=None, deadline=None,
@@ -107,7 +120,7 @@ def makeorg(num, **kwds):
                     for _ in range(random.randrange(1, 5))]
             else:
                 kwds['rangelist'] = [
-                    (rd.datetime(), rd.datetime())
+                    rd.datetimerange()
                     for _ in range(random.randrange(1, 5))]
         for s in node(**kwds):
             yield s
