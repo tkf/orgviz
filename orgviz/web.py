@@ -68,35 +68,6 @@ def args_to_str(*args, **kwds):
     return ', '.join(a for a in [str_args, str_kwds] if a)
 
 
-def older_than(target_path, compare_list, getmtime=os.path.getmtime):
-    """
-    Which is old: target_path or an element (a path) in compare_list?
-
-    It returns iterative to compare modified time of target_path and
-    each path in compare_list.
-
-    >>> def getmt(c):
-    ...     return getmt.data[c]
-    ...
-    >>> getmt.data = dict(a=0, b=1, c=2, d=3, e=4)
-    >>> all(older_than('a', 'bcd', getmtime=getmt))
-    True
-    >>> all(older_than('b', 'bcd', getmtime=getmt))
-    False
-    >>> all(older_than('c', 'bcd', getmtime=getmt))
-    False
-    >>> any(older_than('c', 'bcd', getmtime=getmt))
-    True
-    >>> any(older_than('d', 'bcd', getmtime=getmt))
-    False
-    >>> any(older_than('e', 'bcd', getmtime=getmt))
-    False
-
-    """
-    target_mtime = getmtime(target_path)
-    return (target_mtime < getmtime(c) for c in compare_list)
-
-
 def orgnodes_from_paths(path_list):
     """
     Returns concatenated list of orgparse from list of path.
