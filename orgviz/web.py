@@ -41,6 +41,13 @@ def get_cache(cachename, compute, mtime):
     return value
 
 
+def orgnodes_from_paths(path_list):
+    """
+    Returns concatenated list of orgparse from list of path.
+    """
+    return reduce(lambda x, y: x + y, map(get_orgnodes, path_list))
+
+
 def get_orgnodes(filename):
     """Cached version of `orgparse.load`."""
     return get_cache(
@@ -66,13 +73,6 @@ def args_to_str(*args, **kwds):
         lambda x: '{0}={1}'.format(x[0], repr(x[1])),
         kwds.iteritems()))
     return ', '.join(a for a in [str_args, str_kwds] if a)
-
-
-def orgnodes_from_paths(path_list):
-    """
-    Returns concatenated list of orgparse from list of path.
-    """
-    return reduce(lambda x, y: x + y, map(get_orgnodes, path_list))
 
 
 def listjsonify(listdata):
