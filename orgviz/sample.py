@@ -5,7 +5,9 @@ from . import web
 
 
 CONF_TEMPLATE = """\
-ORG_COMMON_FILES = [{orgpath!r}]
+files = [{orgpath!r}]
+ORG_COMMON_FILES = files
+ORG_TIMELINE_FILES = files
 """
 
 
