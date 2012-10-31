@@ -3,7 +3,6 @@ EVENT_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
     events = []
-    alldate = []
 
     def add_event(node, startdate, enddate=None):
         if not startdate:
@@ -12,10 +11,8 @@ def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
             'title': node.heading,
             'start': startdate.strftime(EVENT_DATE_FORMAT),
             }
-        alldate.append(startdate)
         if enddate:
             ev['end'] = enddate.strftime(EVENT_DATE_FORMAT)
-            alldate.append(enddate)
         events.append(ev)
 
     for (orgnodes, orgpath) in zip(orgnodes_list, orgpath_list):
