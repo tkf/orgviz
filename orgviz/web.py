@@ -97,31 +97,6 @@ def older_than(target_path, compare_list, getmtime=os.path.getmtime):
     return (target_mtime < getmtime(c) for c in compare_list)
 
 
-def get_graph(name, orgpaths, *args, **kwds):
-    """
-    Generates graph image and returns a file name
-
-    If the generated cache file is newer than the any of its dependent
-    org files, the graph will not be generated and the cache file will
-    be used.
-
-    """
-    def generate_graph():
-        image = StringIO()
-        orgnodeslist = orgnodes_from_paths(orgpaths)
-        graph_func_map[name](orgnodeslist, *args, **kwds).savefig(image)
-        image.seek(0)
-        return image.getvalue()
-    from cStringIO import StringIO
-    from .graphs import graph_func_map
-    figname = u'{0}({1})'.format(
-        name, args_to_str(*((orgpaths,) + args), **kwds))
-    return StringIO(get_cache(
-        'graph:{0}'.format(figname),
-        generate_graph,
-        max(os.path.getmtime, orgpaths)))
-
-
 def orgnodes_from_paths(path_list):
     """
     Returns concatenated list of orgparse from list of path.
@@ -226,6 +201,34 @@ def dones_data():
     return render_template(
         "dones_data.html",
         **get_data(orgnodes_list, orgpaths, 'DONE'))
+
+
+# ----------------------------------------------------------------------- #
+# Graph
+
+def get_graph(name, orgpaths, *args, **kwds):
+    """
+    Generates graph image and returns a file name
+
+    If the generated cache file is newer than the any of its dependent
+    org files, the graph will not be generated and the cache file will
+    be used.
+
+    """
+    def generate_graph():
+        image = StringIO()
+        orgnodeslist = orgnodes_from_paths(orgpaths)
+        graph_func_map[name](orgnodeslist, *args, **kwds).savefig(image)
+        image.seek(0)
+        return image.getvalue()
+    from cStringIO import StringIO
+    from .graphs import graph_func_map
+    figname = u'{0}({1})'.format(
+        name, args_to_str(*((orgpaths,) + args), **kwds))
+    return StringIO(get_cache(
+        'graph:{0}'.format(figname),
+        generate_graph,
+        max(os.path.getmtime, orgpaths)))
 
 
 @app.route('/graphs/<name>.png')
