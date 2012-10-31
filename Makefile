@@ -43,6 +43,7 @@ coffee:
 NUVOLA_DIR = orgviz/static/favicons/nuvola
 
 favicons: \
+	$(NUVOLA_DIR)/usb.ico \
 	$(NUVOLA_DIR)/date.ico \
 	$(NUVOLA_DIR)/kmplot.ico \
 	$(NUVOLA_DIR)/korganizer.ico
