@@ -183,11 +183,12 @@ def plot_clocked_and_closed(ax, orgnodes, days=30):
     dh_clock_start = decompose_in_day_and_hour(clock['start'])
     dh_clock_end = decompose_in_day_and_hour(clock['end'])
     ax.plot(dh_closed['day'] + 0.5, dh_closed['hour'], 'x')
-    ax.errorbar(
-        dh_clock_start['day'] + 0.5,
-        (dh_clock_start['hour'] + dh_clock_start['hour']) / 2.0,
-        yerr=(dh_clock_end['hour'] - dh_clock_start['hour']),
-        fmt=None)
+    if len(dh_clock_start) > 0:
+        ax.errorbar(
+            dh_clock_start['day'] + 0.5,
+            (dh_clock_start['hour'] + dh_clock_start['hour']) / 2.0,
+            yerr=(dh_clock_end['hour'] - dh_clock_start['hour']),
+            fmt=None)
     set_xaxis_format_date(ax)
     ax.set_yticks([0, 6, 12, 18, 24])
     ax.set_ylim(24.1, -0.1)
