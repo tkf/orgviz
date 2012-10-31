@@ -188,18 +188,18 @@ def get_graph(name, orgpaths, *args, **kwds):
 
     """
     def generate_graph():
+        from .graphs import graph_func_map
         image = BytesIO()
         orgnodeslist = orgnodes_from_paths(orgpaths)
         graph_func_map[name](orgnodeslist, *args, **kwds).savefig(image)
         image.seek(0)
         return image.getvalue()
-    from .graphs import graph_func_map
-    figname = u'{0}({1})'.format(
-        name, args_to_str(*((orgpaths,) + args), **kwds))
-    return BytesIO(get_cache(
-        'graph:{0}'.format(figname),
+    image = get_cache(
+        'graph:{0}({1})'.format(
+            name, args_to_str(*((orgpaths,) + args), **kwds)),
         generate_graph,
-        max(os.path.getmtime, orgpaths)))
+        max(os.path.getmtime, orgpaths))
+    return BytesIO(image)
 
 
 @app.route('/graphs/<name>.png')
