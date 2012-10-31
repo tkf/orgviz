@@ -245,7 +245,6 @@ def timeline_data():
 # CLI
 
 def add_arguments(parser):
-    import tempfile
     parser.add_argument(
         '--conf', help='configuration file')
     parser.add_argument(
@@ -256,10 +255,6 @@ def add_arguments(parser):
     parser.add_argument(
         '--profile-sort-by', nargs='+', default=('time', 'calls'),
         help='columns to sort the result by.')
-    # FIXME: make graph cache in-memory and get rid of --cache-dir:
-    parser.add_argument(
-        '--cache-dir', default=os.path.join(tempfile.gettempdir(), 'orgviz'),
-        help='directory to cache generated plots.')
     parser.add_argument(
         '--no-cache', default=False, action='store_true')
     parser.add_argument(
@@ -267,7 +262,7 @@ def add_arguments(parser):
         help='port to listen (default: %(default)s)')
 
 
-def run(conf=None, debug=False, cache_dir=None, no_cache=False,
+def run(conf=None, debug=False, no_cache=False,
         profile=None, profile_sort_by=None, port=8000):
     """
     Start orgviz webserver.
@@ -280,16 +275,12 @@ def run(conf=None, debug=False, cache_dir=None, no_cache=False,
             app.config[key] = val
 
     app.config['DEBUG'] = debug
-    app.config['CACHE_DIR'] = cache_dir
     app.config['ORG_USE_CACHE'] = not no_cache
 
     for key in app.config:
         if key.startswith('ORG_') and key.endswith('_FILES'):
             app.config[key] = [
                 os.path.expanduser(fpath) for fpath in app.config[key]]
-
-    if cache_dir and not os.path.exists(cache_dir):
-        os.makedirs(cache_dir)
 
     if profile:
         # hook ProfilerMiddleware
