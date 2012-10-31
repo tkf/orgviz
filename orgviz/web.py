@@ -106,23 +106,20 @@ def get_graph(name, orgpaths, *args, **kwds):
     be used.
 
     """
+    def generate_graph():
+        image = StringIO()
+        orgnodeslist = orgnodes_from_paths(orgpaths)
+        graph_func_map[name](orgnodeslist, *args, **kwds).savefig(image)
+        image.seek(0)
+        return image.getvalue()
+    from cStringIO import StringIO
     from .graphs import graph_func_map
     figname = u'{0}({1})'.format(
         name, args_to_str(*((orgpaths,) + args), **kwds))
-    filename = '{0}.png'.format(
-        hashlib.md5(figname.encode('utf-8')).hexdigest())
-    filepath = os.path.join(app.config['CACHE_DIR'], filename)
-    if (not app.config['ORG_USE_CACHE'] or
-        not os.path.exists(filepath) or
-        any(older_than(filepath, orgpaths))):
-        app.logger.debug(
-            "re-generate graph figname='{0}'".format(figname))
-        orgnodeslist = orgnodes_from_paths(orgpaths)
-        graph_func_map[name](orgnodeslist, *args, **kwds).savefig(filepath)
-    else:
-        app.logger.debug(
-            "use cached graph figname='{0}'".format(figname))
-    return os.path.join(app.config['CACHE_DIR'], filename)
+    return StringIO(get_cache(
+        'graph:{0}'.format(figname),
+        generate_graph,
+        max(os.path.getmtime, orgpaths)))
 
 
 def orgnodes_from_paths(path_list):
