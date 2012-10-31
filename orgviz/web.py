@@ -35,7 +35,7 @@ def get_cache(cachename, compute, mtime):
                 cache.set(cachename_lastmtime, mtime)
             except RuntimeError as e:
                 app.logger.error(
-                    'Error while computing {0}.  Probably it is too big.\n'
+                    'Error while caching {0}.  Probably it is too big.\n'
                     'Got: {1}'.format(cachename, e))
     else:
         app.logger.debug("use cache for '{0}'".format(cachename))
