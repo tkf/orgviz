@@ -6,7 +6,7 @@ OrgViz - Browser based app to view org-mode files from different directions
 In OrgViz, you can...
 
 * View org-mode files in different formats:
-  calendar / table / histogram
+  calendar / table / histogram / time line
 
 * Use rich formatting of web browsers but everything is reachable from
   keyboard.
@@ -130,10 +130,12 @@ OrgViz bundles libraries with the following licenses.
 - `FullCalendar`_ : MIT or GPL v2 license
 - `jQuery Hotkeys`_ : MIT or GPL v2 license
 - `ColorBox`_ : MIT license
+- `SIMILE Widgets Timeline`_ : BSD license
 - `Nuvola`_: LGPL v2.1
 
 .. _jQuery: http://jquery.com/
 .. _FullCalendar: http://arshaw.com/fullcalendar/
 .. _jQuery Hotkeys: https://github.com/tzuryby/jquery.hotkeys
 .. _ColorBox: http://jacklmoore.com/colorbox
+.. _SIMILE Widgets Timeline: http://www.simile-widgets.org/timeline/
 .. _Nuvola: http://www.icon-king.com/projects/nuvola/

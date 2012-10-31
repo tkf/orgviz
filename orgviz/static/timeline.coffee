@@ -1,17 +1,28 @@
-#### Fit `fit` element to `to` element
-fitTo = (fit, to, bottom = 0, right = 0) ->
-  pos = fit.position()
-  fit.height(to.height() - pos.top - bottom)
-  fit.width(to.width() - pos.left - right)
+loadEventData = (tl, eventSource, url, callback) ->
+  Timeline.loadJSON url, (timeline_data) ->
+    eventSource.clear()
+    eventSource.loadJSON(timeline_data, url)
+    tl.layout()
+    callback() if callback?
+  return
 
 
-#### Get a function resize timeglider to window
-getResizeTimeGlider = (tg) ->
-  tgcont = tg.children(".timeglider-container")
-  win = $(window)
-  ->
-    fitTo tg, win
-    fitTo tgcont, win
+panTimeline = (tl, delta) ->
+  b = tl.getBand 0
+  xmin = b.getMinVisibleDate().getTime()
+  xmax = b.getMaxVisibleDate().getTime()
+  dx = (xmax - xmin) * delta / 100
+  b.setCenterVisibleDate b.getCenterVisibleDate().getTime() + dx
+  return
+
+
+zoomTimeline = (tl, zoomIn) ->
+  # NOTE: assuming there is only one timeline and only one band
+  b = tl.getBand 0
+  x = b.dateToPixelOffset b.getCenterVisibleDate().getTime()
+  y = undefined  # reading the source, it seems that y is not used
+  tl.zoom zoomIn, x, y, $("div.timeline-band")[0]
+  return
 
 
 #### Get a function to check the input checkbox and start/stop auo-reload
@@ -41,82 +52,92 @@ getCheckedToggleFunc = (checkbox, callback) ->
     else
       checkbox.attr "checked", "checked"
     callback() if callback?
+    return
 
 
-#### Get a function to emulate mouse push of `delay` time
-#
-getPushPan = (left, right, delay) ->
-  tid = false
-  pushed = false
-  push = (button) ->
-    if not pushed
-      pushed = true
-      button.mousedown()
-      tid = window.setTimeout( ->
-        pushed = false
-        button.mouseup()
-      , delay)
-  [(-> push left), (-> push right)]
+setupKeybinds = (keyboardInput, tl) ->
+  keyboardInput
+    .bind("keydown", "h", (-> panTimeline tl, -10))
+    .bind("keydown", "l", (-> panTimeline tl, +10))
+    .bind("keydown", "o", (-> zoomTimeline tl, false))
+    .bind("keydown", "i", (-> zoomTimeline tl, true))
 
 
 #### setup timeline
 #
-# tg: jq-element
-#     e.g.: $("#placement")
 # data_source: string
 #     URL to load data from
-setupTimeline = (tg, data_source) ->
-  # make tg 100% height/width, before setting up timeglider
-  fitTo tg, $(window), 10  # 10px offset at bottom
-
-  tg.timeline(
-    min_zoom: 1
-    max_zoom: 40
-    data_source: data_source
+setupTimeline = (data_source) ->
+  zoomSteps = new Array(
+    {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR},
+    {pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY},
+    {pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval:  50,  unit: Timeline.DateTime.MONTH},
+    {pixelsPerInterval: 400,  unit: Timeline.DateTime.YEAR},
+    {pixelsPerInterval: 200,  unit: Timeline.DateTime.YEAR},
+    {pixelsPerInterval: 100,  unit: Timeline.DateTime.YEAR}
   )
+  zoomIndex = 10
+  eventSource = new Timeline.DefaultEventSource()
 
-  tg_actor = tg.data("timeline")
+  theme = Timeline.ClassicTheme.create()
+  theme.autoWidth = true
+  theme.mouseWheel = 'zoom'
+
+  bandInfos = [
+    Timeline.createBandInfo(
+      width:          45,
+      intervalUnit:   zoomSteps[zoomIndex].unit,
+      intervalPixels: zoomSteps[zoomIndex].pixelsPerInterval,
+      zoomIndex:      zoomIndex,
+      zoomSteps:      zoomSteps,
+      eventSource:    eventSource,
+      theme:          theme,
+      layout:         'original',
+    )
+  ]
+
+  tl_el = document.getElementById("tl")
+  tl = Timeline.create(tl_el, bandInfos, Timeline.HORIZONTAL);
+
+  # `Timeline._Band' uses a text input box to capture keyboard events.
+  # Let's mix keyboard shortcut to this element.
+  keyboardInput = $([$(document),  $("div.timeline-band-input > input")])
+    .map -> this.toArray()
+
+  reload = (cb) -> loadEventData tl, eventSource, data_source, cb
+  reload -> setupKeybinds keyboardInput, tl
+
+  resizeTimerID = null
+  $(document).resize ->
+    if resizeTimerID == null
+      resizeTimerID = window.setTimeout(->
+        resizeTimerID = null
+        tl.layout()
+      , 500)
 
   # set auto-reload
   autoReloadCheckbox = $("#auto-reload")
-  checkAutoReload = getCheckAutoReload(-> tg_actor.load data_source)
+  checkAutoReload = getCheckAutoReload reload
   autoReloadCheckbox.change checkAutoReload
   checkAutoReload()
 
-  # there is no "pan" api, so just push these buttons!
-  panButtonLeft  = $(".timeglider-pan-left")
-  panButtonRight = $(".timeglider-pan-right")
-  [pushLeft, pushRight] = getPushPan panButtonLeft, panButtonRight, 100
-
-  $(document)
-    .bind("keydown", "r", -> tg_actor.load data_source)
+  keyboardInput
+    .bind("keydown", "g", reload)
     .bind("keydown", "a",
       getCheckedToggleFunc autoReloadCheckbox, checkAutoReload)
-    .bind("keydown", "i", -> tg_actor.zoom -1)  # zoom-in
-    .bind("keydown", "o", -> tg_actor.zoom +1)  # zoom-out
-    .bind("keydown", "h", pushLeft)
-    .bind("keydown", "l", pushRight)
-    #### binding keyup/down to moudeup/down didn't work
-    # .bind("keydown", "h", -> panButtonLeft.mousedown())
-    # .bind("keydown", "l", -> panButtonRight.mousedown())
-    # .bind("keyup", "h", -> panButtonLeft.mouseup())
-    # .bind("keyup", "l", -> panButtonRight.mouseup())
-    #### this seems to have no effect...
-    .bind("keydown", "g", ->
-      panButtonLeft.mouseup()
-      panButtonRight.mouseup()
-      console.log("G!"))
-
-  # this did not work.  height can't be re-fitted.
-  # # auto-resize
-  # resizeTimeGlider = getResizeTimeGlider(tg)
-  # $(window).bind "resize", resizeTimeGlider
-  # resizeTimeGlider()
-
-  # return
-  tg: tg
-  tg_actor: tg_actor
-
 
 root = exports ? this
 root.setupTimeline = setupTimeline
+
+# Note:
+# To grab Timeline objects in browser, execute this:
+#     tl = Timeline.timelines[0]; b = tl.getBand(0)

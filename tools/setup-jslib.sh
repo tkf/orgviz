@@ -24,6 +24,13 @@ hk_name=jquery.hotkeys
 # ColorBox (http://jacklmoore.com/colorbox)
 cb_name=colorbox
 
+# Simile Widgets Timeline (http://simile.mit.edu/timeline/)
+sw_name=timeline_2.3.0
+sw_zipname=timeline_libraries_v2.3.0.zip
+sw_url=http://simile-widgets.googlecode.com/files/$sw_zipname
+sw_zippath=$tmpdir/$sw_zipname
+
+
 log-it(){
     {
         echo
@@ -40,10 +47,13 @@ rm -rf $logf
 log-it "Donload JS libraries"
 git submodule --quiet update --init >> $logf
 [ -e "$fc_zippath" ] || wget $fc_url -O $fc_zippath -a $logf
+[ -e "$sw_zippath" ] || wget $sw_url -O $sw_zippath -a $logf
 
 log-it "Decompress JS libraries"
 rm -rf $tmpdir/$fc_name/
+rm -rf $tmpdir/$sw_name/
 unzip $fc_zippath -d $tmpdir >> $logf
+unzip $sw_zippath -d $tmpdir >> $logf
 
 log-it "Copy JS libraries"
 rm -rf $destdir
@@ -51,6 +61,7 @@ mkdir -p $destdir
 cp -r $tmpdir/$fc_name/fullcalendar $destdir
 cp -r $tmpdir/$fc_name/*-LICENSE.txt $destdir/fullcalendar
 cp -r $tmpdir/$fc_name/jquery $destdir
+cp -r $tmpdir/$sw_name $destdir/timeline
 cp -r lib/$hk_name/jquery.hotkeys.js $destdir/jquery
 cp -r lib/$cb_name/colorbox $destdir
 cp -r lib/$cb_name/example1/* $destdir/colorbox
