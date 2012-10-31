@@ -20,10 +20,10 @@ def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
 
     for (orgnodes, orgpath) in zip(orgnodes_list, orgpath_list):
         for node in orgnodes:
-            add_event(node, node.scheduled)
-            add_event(node, node.deadline)
+            add_event(node, node.scheduled.start)
+            add_event(node, node.deadline.start)
             for date in node.datelist:
-                add_event(node, date)
+                add_event(node, date.start)
             for od in node.rangelist:
                 add_event(node, od.start, od.end)
 
