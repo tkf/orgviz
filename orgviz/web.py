@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import (Flask, request, json, render_template, send_file,
-                   url_for, redirect, jsonify)
-from werkzeug.contrib.cache import SimpleCache
-
 import itertools
 import os
 from io import BytesIO
+
+from flask import (Flask, request, json, render_template, send_file,
+                   url_for, redirect, jsonify)
+from werkzeug.contrib.cache import SimpleCache
 
 import orgparse
 
