@@ -15,33 +15,38 @@ app.config.from_object('orgviz.default_config')
 cache = SimpleCache(default_timeout=60 * 60 * 24)
 
 
-def get_cache(cachename, filename, compute, getmtime=os.path.getmtime):
-    cachename_value = u'{0}:{1}'.format(cachename, filename)
-    cachename_lastmtime = u'{0}_mtime:{1}'.format(cachename, filename)
+def get_cache(cachename, compute, mtime):
+    """
+    Generic cache function based on time stamp.
+    """
+    cachename_value = u'cache:{0}'.format(cachename)
+    cachename_lastmtime = u'mtime:{0}'.format(cachename)
     value = cache.get(cachename_value)
     lastmtime = cache.get(cachename_lastmtime)
-    mtime = getmtime(filename)
     if (not app.config['ORG_USE_CACHE'] or
         None in (value, lastmtime) or
         mtime > lastmtime):
-        app.logger.debug("re-compute from '{0}'".format(filename))
-        value = compute(filename)
+        app.logger.debug("re-compute '{0}'".format(cachename))
+        value = compute()
         if app.config['ORG_USE_CACHE']:
             try:
                 cache.set(cachename_value, value)
                 cache.set(cachename_lastmtime, mtime)
             except RuntimeError as e:
                 app.logger.error(
-                    'Error while loading {0}.  Probably it is too big.\n'
-                    'Got: {1}'.format(filename, e))
+                    'Error while computing {0}.  Probably it is too big.\n'
+                    'Got: {1}'.format(cachename, e))
     else:
-        app.logger.debug("use cache for file '{0}'".format(filename))
+        app.logger.debug("use cache for '{0}'".format(cachename))
     return value
 
 
 def get_orgnodes(filename):
-    """Cached version of orgparse.makelist"""
-    return get_cache('org', filename, lambda x: list(orgparse.load(x)[1:]))
+    """Cached version of `orgparse.load`."""
+    return get_cache(
+        'org:{0}'.format(filename),
+        lambda: list(orgparse.load(filename)[1:]),
+        os.path.getmtime(filename))
 
 
 def args_to_str(*args, **kwds):
