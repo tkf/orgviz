@@ -239,12 +239,8 @@ def page_timeline_history():
 @app.route('/timeline_data')
 def timeline_data():
     from .timeline import gene_timeline
-    orgpaths = \
-        app.config['ORG_COMMON_FILES'] + app.config['ORG_TIMELINE_FILES']
-    orgnodes_list = map(get_orgnodes, orgpaths)
-    initial_zoom = app.config['ORG_TIMELINE_INITIAL_ZOOM']
-    return listjsonify(gene_timeline(
-        orgnodes_list, orgpaths, initial_zoom))
+    return listjsonify(gene_timeline(orgnodes_from_paths(
+        app.config['ORG_COMMON_FILES'] + app.config['ORG_TIMELINE_FILES'])))
 
 
 # ----------------------------------------------------------------------- #

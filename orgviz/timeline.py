@@ -1,7 +1,7 @@
 EVENT_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
-def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
+def gene_timeline(orgnodes):
     events = []
 
     def add_event(node, startdate, enddate=None):
@@ -15,14 +15,13 @@ def gene_timeline(orgnodes_list, orgpath_list, initial_zoom):
             ev['end'] = enddate.strftime(EVENT_DATE_FORMAT)
         events.append(ev)
 
-    for (orgnodes, orgpath) in zip(orgnodes_list, orgpath_list):
-        for node in orgnodes:
-            add_event(node, node.scheduled.start)
-            add_event(node, node.deadline.start)
-            for date in node.datelist:
-                add_event(node, date.start)
-            for od in node.rangelist:
-                add_event(node, od.start, od.end)
+    for node in orgnodes:
+        add_event(node, node.scheduled.start)
+        add_event(node, node.deadline.start)
+        for date in node.datelist:
+            add_event(node, date.start)
+        for od in node.rangelist:
+            add_event(node, od.start, od.end)
 
     return {
         "dateTimeFormat": "iso8601",
