@@ -15,29 +15,33 @@ app.config.from_object('orgviz.default_config')
 cache = SimpleCache(default_timeout=60 * 60 * 24)
 
 
-def get_orgnodes(filename):
-    """Cached version of orgparse.makelist"""
-    cachename_orgnodes = u'org:{0}'.format(filename)         # file path
-    cachename_lastmtime = u'org_mtime:{0}'.format(filename)  # modified time
-    orgnodes = cache.get(cachename_orgnodes)
+def get_cache(cachename, filename, compute, getmtime=os.path.getmtime):
+    cachename_value = u'{0}:{1}'.format(cachename, filename)
+    cachename_lastmtime = u'{0}_mtime:{1}'.format(cachename, filename)
+    value = cache.get(cachename_value)
     lastmtime = cache.get(cachename_lastmtime)
-    mtime = os.path.getmtime(filename)
+    mtime = getmtime(filename)
     if (not app.config['ORG_USE_CACHE'] or
-        None in (orgnodes, lastmtime) or
+        None in (value, lastmtime) or
         mtime > lastmtime):
-        app.logger.debug("re-load org file '{0}'".format(filename))
-        orgnodes = list(orgparse.load(filename)[1:])
+        app.logger.debug("re-compute from '{0}'".format(filename))
+        value = compute(filename)
         if app.config['ORG_USE_CACHE']:
             try:
-                cache.set(cachename_orgnodes, orgnodes)
+                cache.set(cachename_value, value)
                 cache.set(cachename_lastmtime, mtime)
             except RuntimeError as e:
                 app.logger.error(
                     'Error while loading {0}.  Probably it is too big.\n'
                     'Got: {1}'.format(filename, e))
     else:
-        app.logger.debug("use cache for org file '{0}'".format(filename))
-    return orgnodes
+        app.logger.debug("use cache for file '{0}'".format(filename))
+    return value
+
+
+def get_orgnodes(filename):
+    """Cached version of orgparse.makelist"""
+    return get_cache('org', filename, lambda x: list(orgparse.load(x)[1:]))
 
 
 def args_to_str(*args, **kwds):
