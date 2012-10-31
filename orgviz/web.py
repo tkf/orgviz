@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import (Flask, request, json, render_template, send_from_directory,
+from flask import (Flask, request, json, render_template, send_file,
                    url_for, redirect, jsonify)
 from werkzeug.contrib.cache import SimpleCache
 
@@ -113,7 +113,7 @@ def get_graph(name, orgpaths, *args, **kwds):
     else:
         app.logger.debug(
             "use cached graph figname='{0}'".format(figname))
-    return filename
+    return os.path.join(app.config['CACHE_DIR'], filename)
 
 
 def orgnodes_from_paths(path_list):
@@ -224,11 +224,11 @@ def dones_data():
 
 @app.route('/graphs/<name>.png')
 def graphs_image(name):
-    filename = get_graph(
-        name,
-        app.config['ORG_COMMON_FILES'] + app.config['ORG_GRAPHS_FILES'],
-        'DONE')
-    return send_from_directory(app.config['CACHE_DIR'], filename)
+    return send_file(
+        get_graph(
+            name,
+            app.config['ORG_COMMON_FILES'] + app.config['ORG_GRAPHS_FILES'],
+            'DONE'))
 
 
 # ----------------------------------------------------------------------- #
