@@ -6,7 +6,8 @@ from werkzeug.contrib.cache import SimpleCache
 
 import itertools
 import os
-import hashlib
+from io import BytesIO
+
 import orgparse
 
 
@@ -187,16 +188,15 @@ def get_graph(name, orgpaths, *args, **kwds):
 
     """
     def generate_graph():
-        image = StringIO()
+        image = BytesIO()
         orgnodeslist = orgnodes_from_paths(orgpaths)
         graph_func_map[name](orgnodeslist, *args, **kwds).savefig(image)
         image.seek(0)
         return image.getvalue()
-    from cStringIO import StringIO
     from .graphs import graph_func_map
     figname = u'{0}({1})'.format(
         name, args_to_str(*((orgpaths,) + args), **kwds))
-    return StringIO(get_cache(
+    return BytesIO(get_cache(
         'graph:{0}'.format(figname),
         generate_graph,
         max(os.path.getmtime, orgpaths)))
