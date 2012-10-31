@@ -27,7 +27,7 @@ class RandomDatetime(object):
 
 
 def node(level, heading, todo=None, scheduled=None, deadline=None,
-         closed=None, clock=[], tags=[]):
+         closed=None, clock=[], tags=[], datelist=[], rangelist=[]):
     active_datestr = lambda x: x.strftime('<%Y-%m-%d %a>')
     inactive_datestr = lambda x: x.strftime('[%Y-%m-%d %a %H:%M]')
     yield '*' * level
@@ -59,6 +59,14 @@ def node(level, heading, todo=None, scheduled=None, deadline=None,
         yield inactive_datestr(clock_end)
         yield ' => '
         yield timedeltastr(clock_end - clock_start)
+        yield '\n'
+    for date in datelist:
+        yield inactive_datestr(date)
+        yield '\n'
+    for (start, end) in rangelist:
+        yield inactive_datestr(start)
+        yield '--'
+        yield inactive_datestr(end)
         yield '\n'
 
 
@@ -92,6 +100,15 @@ def makeorg(num, **kwds):
                 clock.append((start, end))
         if random.choice(true_or_false):
             kwds['tags'] = [random.choice(tags_pops)]
+        if random.choice(true_or_false):
+            if random.choice(true_or_false):
+                kwds['datelist'] = [
+                    rd.datetime()
+                    for _ in range(random.randrange(1, 5))]
+            else:
+                kwds['rangelist'] = [
+                    (rd.datetime(), rd.datetime())
+                    for _ in range(random.randrange(1, 5))]
         for s in node(**kwds):
             yield s
 
