@@ -131,6 +131,9 @@ def page_orgviz():
         )
 
 
+# ----------------------------------------------------------------------- #
+# Calendar
+
 @app.route('/events_data')
 def events_data():
     from .cal import gene_events
@@ -164,6 +167,9 @@ def cal_config():
         eventSources=app.config['ORG_CAL_ADD_EVENTSOURCES'],
     ))
 
+
+# ----------------------------------------------------------------------- #
+# Dones
 
 @app.route('/dones_data')
 def dones_data():
